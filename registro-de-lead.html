@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Registro de Lead — Demo | Empresa ABC</title>
+  <meta name="description" content="Versão de demonstração do formulário de registro de leads em eventos (dados fictícios). / Demo version of the event lead capture form (fictional data).">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2300c46e'/%3E%3Cpath d='M9 22V10h4.6c2.6 0 4.2 1.4 4.2 3.6 0 1.5-.8 2.6-2 3.1l2.6 5.3h-2.8l-2.2-4.8h-1.8V22H9zm2.6-6.9h1.9c1.2 0 1.9-.6 1.9-1.5s-.7-1.5-1.9-1.5h-1.9v3z' fill='%230a1a13'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --green:#00c46e; --green-bright:#25e07f; --green-deep:#0a6b3f;
+      --navy:#16232f; --ink:#14202b;
+      --paper:#fff; --paper-2:#f4f6f7; --line:#e0e4e7;
+      --muted:#5d6b77; --muted-2:#8b97a1;
+      --display:"Work Sans",system-ui,sans-serif; --body:"Roboto",system-ui,sans-serif;
+    }
+    *{box-sizing:border-box;}
+    [hidden]{display:none !important;}
+    html,body{margin:0;}
+    body{
+      font-family:var(--body); color:var(--ink); background:var(--paper-2);
+      -webkit-font-smoothing:antialiased; line-height:1.5;
+    }
+    .app{max-width:560px; margin:0 auto; min-height:100vh; background:var(--paper-2);
+      box-shadow:0 0 40px rgba(0,0,0,.06);}
+
+    /* FAIXA DE DEMO — fixa, aparece em qualquer print */
+    .faixa-demo{background:#f6c453; color:#4a3100; text-align:center;
+      font-family:var(--display); font-weight:700; font-size:10.5px;
+      letter-spacing:.13em; text-transform:uppercase; padding:7px 14px;}
+
+    /* HERO */
+    .hero{position:relative; overflow:hidden; padding:34px 24px 30px;
+      background:radial-gradient(130% 120% at 22% 12%,#0e3a26 0%,#0a1a13 48%,#060d0a 100%);}
+    .hero-glow{position:absolute; inset:0; mix-blend-mode:screen; pointer-events:none;
+      background:radial-gradient(600px 360px at 12% -10%,rgba(0,228,132,.45),transparent 60%);}
+    .hero-inner{position:relative; z-index:2;}
+    .hero-top{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
+    .brand{font-family:var(--display); font-weight:700; letter-spacing:.28em; font-size:12.5px; color:var(--green);}
+    .demo-chip{background:#f6c453; color:#5a3d00; font-family:var(--display);
+      font-weight:800; font-size:10px; letter-spacing:.1em; padding:3px 10px;
+      border-radius:20px; text-transform:uppercase;}
+    .hero-acoes{margin-left:auto; display:flex; align-items:center; gap:8px;}
+    .interruptor-idioma{display:flex; background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:2px;}
+    .interruptor-idioma button{background:none; border:none; border-radius:8px; padding:5px 9px;
+      font-family:var(--display); font-size:11px; font-weight:800; letter-spacing:.06em;
+      color:rgba(255,255,255,.5); cursor:pointer; transition:all .15s;}
+    .interruptor-idioma button.ativo{background:var(--green); color:#06281a;}
+    .hero-title{font-family:var(--display); font-weight:300; text-transform:uppercase;
+      font-size:40px; line-height:1.02; letter-spacing:-.02em; margin:0; color:var(--green);}
+    .hero-title b{font-weight:800; color:#fff;}
+    .hero-sub{color:#cfe8da; font-size:15px; margin:14px 0 0; max-width:430px;}
+
+    /* PROGRESSO */
+    .progress{height:5px; background:#dfe5e9;}
+    .progress-bar{height:100%; width:20%; background:linear-gradient(90deg,var(--green-deep),var(--green-bright));
+      transition:width .35s ease;}
+
+    /* CARD */
+    .card{padding:26px 22px 34px;}
+    .step{animation:fade .25s ease;}
+    @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+    .q-title{font-family:var(--display); font-weight:700; font-size:23px; line-height:1.2;
+      letter-spacing:-.01em; margin:6px 0 6px; color:var(--ink);}
+    .q-help{color:var(--muted); font-size:14px; margin:0 0 18px;}
+
+    /* CAMPOS */
+    .field{display:block; margin:0 0 18px;}
+    .lbl{display:block; font-weight:500; font-size:15px; margin-bottom:7px; color:var(--ink);}
+    .hint{display:block; font-size:13px; color:var(--muted-2); margin-top:6px;}
+    input[type=text],input[type=tel],input[type=email],textarea{
+      width:100%; border:1.5px solid var(--line); border-radius:12px; padding:14px 15px;
+      font-family:var(--body); font-size:16px; color:var(--ink); background:var(--paper);
+      transition:border-color .15s, box-shadow .15s;}
+    input:focus,textarea:focus{outline:none; border-color:var(--green);
+      box-shadow:0 0 0 4px rgba(0,196,110,.14);}
+    textarea{resize:vertical; min-height:120px;}
+
+    /* CARDS DE ESCOLHA (múltipla e única) */
+    .choice-grid{display:grid; gap:10px;}
+    .choice{position:relative; display:block; cursor:pointer;}
+    .choice input{position:absolute; opacity:0; width:0; height:0;}
+    .choice-face{display:flex; align-items:center; gap:12px; min-height:56px;
+      border:1.5px solid var(--line); border-radius:14px; padding:14px 16px 14px 48px;
+      background:var(--paper); font-size:15.5px; font-weight:500; color:var(--ink);
+      transition:border-color .15s, background .15s, box-shadow .15s;}
+    .choice-face::before{content:""; position:absolute; left:16px; top:50%; transform:translateY(-50%);
+      width:22px; height:22px; border:2px solid #cfd5da; border-radius:6px; background:#fff; transition:all .15s;}
+    .choice input[type=radio] + .choice-face::before{border-radius:50%;}
+    .choice input:checked + .choice-face{border-color:var(--green); background:rgba(0,196,110,.07);
+      box-shadow:0 0 0 3px rgba(0,196,110,.12);}
+    .choice input:checked + .choice-face::before{background:var(--green); border-color:var(--green);
+      box-shadow:inset 0 0 0 4px #fff;}
+    .choice input:focus-visible + .choice-face{box-shadow:0 0 0 4px rgba(0,196,110,.22);}
+
+    /* CARDS DE CLASSIFICAÇÃO (com descrição sempre visível) */
+    .classif-grid{display:grid; gap:12px;}
+    .classif{position:relative; display:block; cursor:pointer;}
+    .classif input{position:absolute; opacity:0; width:0; height:0;}
+    .classif-face{display:block; border:1.5px solid var(--line); border-radius:16px;
+      padding:18px 18px 18px 50px; background:var(--paper);
+      transition:border-color .15s, background .15s, box-shadow .15s;}
+    .classif-face::before{content:""; position:absolute; left:18px; top:20px;
+      width:22px; height:22px; border:2px solid #cfd5da; border-radius:50%; background:#fff; transition:all .15s;}
+    .classif-title{display:block; font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink);}
+    .classif-desc{display:block; font-size:13.5px; color:var(--muted); line-height:1.5; margin-top:6px;}
+    .classif input:checked + .classif-face{border-color:var(--green); background:rgba(0,196,110,.07);
+      box-shadow:0 0 0 3px rgba(0,196,110,.12);}
+    .classif input:checked + .classif-face::before{background:var(--green); border-color:var(--green);
+      box-shadow:inset 0 0 0 4px #fff;}
+    .classif input:checked + .classif-face .classif-title{color:var(--green-deep);}
+
+    /* TABS texto/áudio */
+    .tabs{display:flex; gap:8px; background:#e7ebee; padding:5px; border-radius:12px; margin-bottom:16px;}
+    .tab{flex:1; border:none; background:transparent; padding:11px; border-radius:9px; cursor:pointer;
+      font-family:var(--body); font-size:14.5px; font-weight:600; color:var(--muted);}
+    .tab.is-active{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.12);}
+
+    /* GRAVADOR */
+    .recorder{border:1.5px dashed var(--line); border-radius:16px; padding:22px; text-align:center; background:var(--paper);}
+    .rec-status{font-size:14px; color:var(--muted); margin-bottom:6px;}
+    .rec-time{font-family:var(--display); font-weight:700; font-size:30px; color:var(--ink); margin-bottom:14px;}
+    .rec-controls{display:flex; justify-content:center; gap:10px;}
+    .rec-btn{border:none; border-radius:999px; padding:14px 26px; font-family:var(--body); font-weight:700;
+      font-size:15px; cursor:pointer; color:#fff;}
+    .rec-btn.rec{background:#e23b5a;}
+    .rec-btn.stop{background:var(--ink);}
+    .rec-btn:active{transform:translateY(1px);}
+    #player{width:100%; margin-top:16px;}
+    .link-btn{display:inline-block; margin-top:12px; background:none; border:none; color:#e23b5a;
+      font-size:14px; font-weight:600; cursor:pointer; text-decoration:underline; font-family:var(--body);}
+    .rec-nota{margin-top:14px; font-size:12.5px; color:var(--muted-2); line-height:1.5;}
+
+    /* AVISO DESTAQUE */
+    .aviso{background:rgba(0,196,110,.08); border-left:3px solid var(--green); border-radius:0 10px 10px 0;
+      padding:12px 14px; margin-bottom:18px; font-size:13.5px; color:var(--green-deep); line-height:1.5;}
+    .aviso strong{display:block; font-size:14px; margin-bottom:2px;}
+
+    /* NAVEGAÇÃO */
+    .nav{display:flex; gap:12px; margin-top:26px;}
+    .btn{flex:1; border:none; border-radius:14px; padding:16px; font-family:var(--body); font-weight:700;
+      font-size:16px; cursor:pointer; transition:transform .05s, box-shadow .15s, background .15s;}
+    .btn.primary{background:var(--green); color:#06281a; box-shadow:0 6px 18px rgba(0,196,110,.32);}
+    .btn.primary:active{transform:translateY(1px);}
+    .btn.primary:disabled{opacity:.6; cursor:not-allowed; box-shadow:none;}
+    .btn.ghost{flex:0 0 34%; background:#e7ebee; color:var(--muted);}
+
+    .erro{margin:16px 0 0; background:#fdecef; border-left:3px solid #e23b5a; color:#9a2438;
+      padding:12px 14px; border-radius:0 8px 8px 0; font-size:14px;}
+
+    /* LOADING */
+    .overlay{position:fixed; inset:0; background:rgba(6,13,10,.72); display:flex; flex-direction:column;
+      align-items:center; justify-content:center; z-index:50; color:#fff; text-align:center; padding:24px;}
+    .spinner{width:46px; height:46px; border:4px solid rgba(255,255,255,.25); border-top-color:var(--green-bright);
+      border-radius:50%; animation:spin .8s linear infinite; margin-bottom:16px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    #loadingMsg{font-family:var(--display); font-weight:500; font-size:17px;}
+
+    /* SUCESSO */
+    .success{padding:52px 24px 60px; text-align:center;}
+    .success-mark{width:74px; height:74px; margin:0 auto 18px; border-radius:50%;
+      background:rgba(0,196,110,.14); color:var(--green-deep); font-size:38px; font-weight:700;
+      display:flex; align-items:center; justify-content:center;}
+    .success h2{font-family:var(--display); font-weight:700; font-size:26px; color:var(--ink); margin:0 0 8px;}
+    .success p{color:var(--muted); font-size:15.5px; margin:0;}
+    .protocolo{display:inline-block; margin-top:18px; background:var(--navy); color:#fff;
+      font-family:var(--display); font-weight:800; font-size:15px; letter-spacing:.08em;
+      padding:9px 20px; border-radius:20px;}
+
+    /* Resumo "o que seria enviado" */
+    .resumo{margin:26px auto 0; max-width:420px; text-align:left; background:var(--paper);
+      border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+    .resumo summary{cursor:pointer; padding:14px 18px; font-family:var(--display);
+      font-weight:700; font-size:14px; color:var(--ink); list-style:none;}
+    .resumo summary::-webkit-details-marker{display:none;}
+    .resumo summary::after{content:"▾"; float:right; color:var(--muted-2);}
+    .resumo[open] summary::after{content:"▴";}
+    .resumo-corpo{border-top:1px solid var(--line); padding:6px 18px 16px;}
+    .resumo-linha{display:flex; gap:12px; padding:9px 0; border-bottom:1px solid #f0f3f4; font-size:13.5px;}
+    .resumo-linha:last-child{border-bottom:none;}
+    .resumo-k{color:var(--muted); flex:0 0 42%;}
+    .resumo-v{color:var(--ink); word-break:break-word; flex:1;}
+    .resumo-nota{padding:12px 18px; background:#fffaf0; border-top:1px solid #f6e0b8;
+      font-size:12.5px; color:#b7791f; line-height:1.5;}
+
+    footer.rodape{padding:22px 24px 34px; text-align:center; color:var(--muted-2); font-size:12.5px; line-height:1.6;}
+
+    @media (max-width:380px){
+      .hero-title{font-size:34px;}
+      .card{padding:22px 16px 30px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <div class="faixa-demo" data-i18n="faixaDemo">Versão demonstrativa · dados fictícios · nada é gravado ou enviado</div>
+
+    <header class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <span class="brand">EMPRESA ABC</span>
+          <span class="demo-chip" data-i18n="chipDemo">Demo</span>
+          <div class="hero-acoes">
+            <div class="interruptor-idioma" role="group" id="grupoIdioma">
+              <button type="button" id="btnPT" onclick="definirIdioma('pt')">PT</button>
+              <button type="button" id="btnEN" onclick="definirIdioma('en')">EN</button>
+            </div>
+          </div>
+        </div>
+        <h1 class="hero-title"><span data-i18n="heroT1"></span> <b data-i18n="heroT2"></b></h1>
+        <p class="hero-sub" data-i18n="heroSub"></p>
+      </div>
+    </header>
+
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+    <main class="card" id="cardPrincipal">
+      <form id="form" novalidate>
+
+        <!-- ETAPA 1 — Dados do lead -->
+        <section class="step" data-step="1">
+          <h2 class="q-title" data-i18n="p1Titulo"></h2>
+          <p class="q-help" data-i18n="p1Ajuda"></p>
+          <div class="choice-grid" id="gridResponsavel" style="margin-bottom:18px;"></div>
+
+          <label class="field" id="respOutroField" hidden>
+            <span class="lbl" data-i18n="lblRespOutro"></span>
+            <input type="text" name="responsavelOutro" autocomplete="off" id="inRespOutro">
+          </label>
+
+          <label class="field">
+            <span class="lbl" data-i18n="lblNome"></span>
+            <input type="text" name="nome" autocomplete="off" id="inNome">
+          </label>
+          <label class="field">
+            <span class="lbl" data-i18n="lblWhats"></span>
+            <input type="tel" name="whatsapp" id="whatsapp" inputmode="numeric" autocomplete="off">
+            <span class="hint" data-i18n="hintWhats"></span>
+          </label>
+          <label class="field">
+            <span class="lbl" data-i18n="lblEmail"></span>
+            <input type="email" name="email" inputmode="email" autocomplete="off" id="inEmail">
+          </label>
+          <label class="field">
+            <span class="lbl" data-i18n="lblEmpresa"></span>
+            <input type="text" name="empresa" autocomplete="off" id="inEmpresa">
+          </label>
+        </section>
+
+        <!-- ETAPA 2 — Interesse demonstrado -->
+        <section class="step" data-step="2" hidden>
+          <h2 class="q-title" data-i18n="p2Titulo"></h2>
+          <p class="q-help" data-i18n="p2Ajuda"></p>
+          <div class="choice-grid" id="gridInteresses"></div>
+        </section>
+
+        <!-- ETAPA 3 — Papel do lead na decisão -->
+        <section class="step" data-step="3" hidden>
+          <h2 class="q-title" data-i18n="p3Titulo"></h2>
+          <p class="q-help" data-i18n="p3Ajuda"></p>
+          <div class="choice-grid" id="gridPapel"></div>
+        </section>
+
+        <!-- ETAPA 4 — Classificação do lead -->
+        <section class="step" data-step="4" hidden>
+          <h2 class="q-title" data-i18n="p4Titulo"></h2>
+          <p class="q-help" data-i18n="p4Ajuda"></p>
+          <div class="classif-grid" id="gridClassif"></div>
+        </section>
+
+        <!-- ETAPA 5 — Resumo da conversa -->
+        <section class="step" data-step="5" hidden>
+          <div class="aviso">
+            <strong data-i18n="avisoTitulo"></strong>
+            <span data-i18n="avisoTexto"></span>
+          </div>
+          <p class="q-help" data-i18n="p5Ajuda"></p>
+
+          <div class="tabs">
+            <button type="button" class="tab" data-mode="texto" data-i18n="tabTexto"></button>
+            <button type="button" class="tab is-active" data-mode="audio" data-i18n="tabAudio"></button>
+          </div>
+
+          <div class="pane" data-pane="texto" hidden>
+            <textarea name="resumoDigitado" rows="5" id="inResumo"></textarea>
+          </div>
+
+          <div class="pane" data-pane="audio">
+            <div class="recorder">
+              <div class="rec-status" id="recStatus"></div>
+              <div class="rec-time" id="recTime">00:00</div>
+              <div class="rec-controls">
+                <button type="button" class="rec-btn rec" id="btnRec"></button>
+                <button type="button" class="rec-btn stop" id="btnStop" hidden></button>
+              </div>
+              <audio id="player" controls hidden></audio>
+              <button type="button" class="link-btn" id="btnApagar" hidden></button>
+              <p class="rec-nota" id="recNota"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navegação -->
+        <div class="nav">
+          <button type="button" class="btn ghost" id="btnVoltar" hidden></button>
+          <button type="button" class="btn primary" id="btnAvancar"></button>
+          <button type="submit" class="btn primary" id="btnEnviar" hidden></button>
+        </div>
+
+        <p class="erro" id="erro" role="alert" hidden></p>
+      </form>
+    </main>
+
+    <div class="overlay" id="loading" hidden>
+      <div class="spinner"></div>
+      <p id="loadingMsg"></p>
+    </div>
+
+    <div class="success" id="success" hidden>
+      <div class="success-mark">✓</div>
+      <h2 id="sucTitulo"></h2>
+      <p id="sucTexto"></p>
+      <div class="protocolo" id="sucProtocolo"></div>
+
+      <details class="resumo" id="resumoBox">
+        <summary id="resumoTitulo"></summary>
+        <div class="resumo-corpo" id="resumoCorpo"></div>
+        <div class="resumo-nota" id="resumoNota"></div>
+      </details>
+
+      <button class="btn primary" style="margin-top:30px;max-width:320px;" id="btnNovo"></button>
+    </div>
+
+    <footer class="rodape" data-i18n="rodape"></footer>
+
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* =====================================================================
+       VERSÃO DEMO — Empresa ABC (fictícia).
+       Sem back-end: nada é enviado, gravado ou armazenado. O áudio gravado
+       existe apenas na memória do navegador e some ao recarregar a página.
+       ===================================================================== */
+
+    /* =====================================================================
+       1. TEXTOS DA INTERFACE (PT / EN)
+       ===================================================================== */
+    var TEXTOS = {
+      pt: {
+        tituloPagina:'Registro de Lead — Demo | Empresa ABC',
+        faixaDemo:'Versão demonstrativa · dados fictícios · nada é gravado ou enviado',
+        chipDemo:'Demo',
+        heroT1:'Registro', heroT2:'de lead',
+        heroSub:'Preencha os dados do lead captado no Evento Demo 2026. Seja preciso: as informações alimentam direto o time comercial.',
+
+        p1Titulo:'Dados do lead',
+        p1Ajuda:'Antes de registrar o lead, informe quem está cadastrando este contato.',
+        lblRespOutro:'Nome de quem está cadastrando',
+        phRespOutro:'Digite o nome completo',
+        lblNome:'Nome do lead', phNome:'Nome completo',
+        lblWhats:'WhatsApp do lead', hintWhats:'Com DDD. Ex.: (11) 99999-9999', phWhats:'(00) 00000-0000',
+        lblEmail:'E-mail do lead', phEmail:'email@empresa.com',
+        lblEmpresa:'Empresa do lead', phEmpresa:'Nome da empresa',
+        optOutro:'Outro (digitar nome)',
+
+        p2Titulo:'Interesse demonstrado no evento',
+        p2Ajuda:'Marque todas as soluções em que houve interesse do lead durante a conversa.',
+
+        p3Titulo:'Papel do lead na decisão',
+        p3Ajuda:'Qual é o papel deste contato na escolha e contratação da solução?',
+        papelDecide:'Decide', papelInflu:'Influencia', papelNao:'Não participa',
+
+        p4Titulo:'Classifique o nível de interesse do lead',
+        p4Ajuda:'Com base no que foi conversado entre vocês, escolha a classificação que melhor descreve a oportunidade.',
+        cSuperT:'Super Quente 🔥🔥🔥',
+        cSuperD:'Participou de apresentação e tem grandes chances de evoluir para venda.',
+        cQuenteT:'Quente 🔥🔥',
+        cQuenteD:'Participou de apresentação, mas ainda é necessário reforço e pitch de vendas.',
+        cFrioT:'Frio 🔥',
+        cFrioD:'Houve conversa no stand, mas tem poucas chances de evolução no momento.',
+
+        avisoTitulo:'[IMPORTANTÍSSIMO]',
+        avisoTexto:'Resumo sobre a conversa: o que mais chamou a atenção dele? Por que agora?',
+        p5Ajuda:'Descreva o que foi conversado entre vocês, quais foram as dores, o que mais chamou a atenção do prospect e por que devemos abordá-lo. Use texto ou grave um áudio rápido.',
+        tabTexto:'Escrever', tabAudio:'Gravar áudio',
+        phResumo:'Descreva aqui os pontos principais da conversa...',
+
+        recInicial:'Toque em gravar para começar (até 55s).',
+        recGravando:'Gravando... toque em parar quando terminar.',
+        recPronto:'Pronto! Ouça o áudio abaixo.',
+        recBtnGravar:'● Gravar', recBtnParar:'■ Parar', recBtnApagar:'Apagar áudio',
+        recNota:'Na demonstração o áudio fica apenas na memória do seu navegador: dá para gravar e ouvir, mas nada é enviado ou armazenado. Ao recarregar a página, o áudio some.',
+
+        btnContinuar:'Continuar', btnVoltar:'Voltar', btnSalvar:'Salvar lead',
+        loadingSalvar:'Salvando lead...', loadingAudio:'Salvando lead e áudio...',
+
+        sucTitulo:'Lead registrado!',
+        sucTexto:'Na versão real, os dados iriam para a base do time comercial. Nesta demonstração nada foi salvo.',
+        resumoTitulo:'Ver o que seria enviado',
+        resumoNota:'Nenhuma dessas informações saiu do seu navegador. O áudio, se gravado, também não foi enviado.',
+        btnNovo:'Registrar novo lead',
+        rodape:'Versão demonstrativa — todos os dados são fictícios e nada é gravado.',
+
+        /* rótulos do resumo */
+        rResponsavel:'Cadastrado por', rNome:'Nome do lead', rWhats:'WhatsApp',
+        rEmail:'E-mail', rEmpresa:'Empresa', rInteresses:'Interesses',
+        rPapel:'Papel na decisão', rClassif:'Classificação', rResumo:'Resumo da conversa',
+        rAudio:'Áudio', rAudioSim:function (s) { return 'gravado (' + s + 's) — não enviado'; },
+        rAudioNao:'não gravado', rVazio:'—',
+
+        /* erros */
+        errResponsavel:'Selecione quem está cadastrando o lead.',
+        errRespOutro:'Digite o nome de quem está cadastrando o lead.',
+        errNome:'Informe o nome do lead.',
+        errWhats:'Informe um WhatsApp válido com DDD. Ex.: (11) 99999-9999',
+        errEmail:'Informe um e-mail válido.',
+        errEmpresa:'Informe o nome da empresa do lead.',
+        errInteresse:'Selecione ao menos uma opção de interesse.',
+        errPapel:'Selecione o papel do lead na decisão.',
+        errClassif:'Classifique o nível de interesse do lead.',
+        errResumo:'Adicione um resumo da conversa (texto ou áudio).',
+        errMicNao:'Seu navegador não permite gravação de áudio. Use o campo de texto.',
+        errMicNegado:'Não consegui acessar o microfone. Verifique a permissão do navegador.'
+      },
+      en: {
+        tituloPagina:'Lead Registration — Demo | Empresa ABC',
+        faixaDemo:'Demo version · fictional data · nothing is stored or sent',
+        chipDemo:'Demo',
+        heroT1:'Lead', heroT2:'registration',
+        heroSub:'Fill in the details of the lead captured at Demo Event 2026. Be accurate: this information goes straight to the sales team.',
+
+        p1Titulo:'Lead details',
+        p1Ajuda:'Before registering the lead, tell us who is capturing this contact.',
+        lblRespOutro:'Name of the person capturing',
+        phRespOutro:'Type the full name',
+        lblNome:'Lead name', phNome:'Full name',
+        lblWhats:'Lead WhatsApp', hintWhats:'With area code. E.g.: (11) 99999-9999', phWhats:'(00) 00000-0000',
+        lblEmail:'Lead email', phEmail:'email@company.com',
+        lblEmpresa:'Lead company', phEmpresa:'Company name',
+        optOutro:'Someone else (type the name)',
+
+        p2Titulo:'Interest shown at the event',
+        p2Ajuda:'Tick every solution the lead showed interest in during the conversation.',
+
+        p3Titulo:'Lead role in the decision',
+        p3Ajuda:'What is this contact’s role in choosing and buying the solution?',
+        papelDecide:'Decision maker', papelInflu:'Influencer', papelNao:'Not involved',
+
+        p4Titulo:'Rate the lead’s level of interest',
+        p4Ajuda:'Based on what you discussed, pick the rating that best describes the opportunity.',
+        cSuperT:'Red hot 🔥🔥🔥',
+        cSuperD:'Attended a demo and has a strong chance of moving to a deal.',
+        cQuenteT:'Hot 🔥🔥',
+        cQuenteD:'Attended a demo, but still needs follow-up and a sales pitch.',
+        cFrioT:'Cold 🔥',
+        cFrioD:'We talked at the booth, but there is little chance of moving forward right now.',
+
+        avisoTitulo:'[VERY IMPORTANT]',
+        avisoTexto:'Summary of the conversation: what caught their attention the most? Why now?',
+        p5Ajuda:'Describe what you discussed, the pain points, what caught the prospect’s attention the most and why we should reach out. Write it down or record a quick voice note.',
+        tabTexto:'Write', tabAudio:'Record audio',
+        phResumo:'Describe the main points of the conversation here...',
+
+        recInicial:'Tap record to start (up to 55s).',
+        recGravando:'Recording... tap stop when you are done.',
+        recPronto:'Done! Listen to the audio below.',
+        recBtnGravar:'● Record', recBtnParar:'■ Stop', recBtnApagar:'Delete audio',
+        recNota:'In this demo the audio stays only in your browser’s memory: you can record it and play it back, but nothing is uploaded or stored. Reload the page and the audio is gone.',
+
+        btnContinuar:'Continue', btnVoltar:'Back', btnSalvar:'Save lead',
+        loadingSalvar:'Saving lead...', loadingAudio:'Saving lead and audio...',
+
+        sucTitulo:'Lead registered!',
+        sucTexto:'In the real version the data would go to the sales team’s database. In this demo nothing was saved.',
+        resumoTitulo:'See what would be sent',
+        resumoNota:'None of this information left your browser. The audio, if recorded, was not uploaded either.',
+        btnNovo:'Register another lead',
+        rodape:'Demo version — all data is fictional and nothing is stored.',
+
+        rResponsavel:'Captured by', rNome:'Lead name', rWhats:'WhatsApp',
+        rEmail:'Email', rEmpresa:'Company', rInteresses:'Interests',
+        rPapel:'Role in the decision', rClassif:'Rating', rResumo:'Conversation summary',
+        rAudio:'Audio', rAudioSim:function (s) { return 'recorded (' + s + 's) — not uploaded'; },
+        rAudioNao:'not recorded', rVazio:'—',
+
+        errResponsavel:'Select who is capturing the lead.',
+        errRespOutro:'Type the name of the person capturing the lead.',
+        errNome:'Enter the lead’s name.',
+        errWhats:'Enter a valid WhatsApp number with area code. E.g.: (11) 99999-9999',
+        errEmail:'Enter a valid email address.',
+        errEmpresa:'Enter the lead’s company name.',
+        errInteresse:'Select at least one area of interest.',
+        errPapel:'Select the lead’s role in the decision.',
+        errClassif:'Rate the lead’s level of interest.',
+        errResumo:'Add a summary of the conversation (text or audio).',
+        errMicNao:'Your browser does not support audio recording. Use the text field instead.',
+        errMicNegado:'I could not access the microphone. Check your browser permission.'
+      }
+    };
+
+    var IDIOMA = 'pt';
+    function t(chave) {
+      var v = (TEXTOS[IDIOMA] || TEXTOS.pt)[chave];
+      if (v === undefined) v = TEXTOS.pt[chave];
+      return v === undefined ? '' : v;
+    }
+    window.t = t;
+
+    /* =====================================================================
+       2. DADOS FIXOS DA DEMO
+       ===================================================================== */
+    // Nomes fictícios de quem faz a captação no stand.
+    var RESPONSAVEIS = ['Ana Soares', 'Pedro Santos', 'João Silva', 'Maria Sousa'];
+
+    // Produtos da taxonomia (mesmos valores canônicos usados no UTM Builder).
+    // São nomes próprios de produto: não se traduzem.
+    var PRODUTOS = ['Recrutador', 'Vendedor', 'Calculador', 'Otimizador', 'Contabilizador', 'Tributador'];
+
+    var PAPEIS = [
+      { v:'Decide',        k:'papelDecide' },
+      { v:'Influencia',    k:'papelInflu'  },
+      { v:'Não participa', k:'papelNao'    }
+    ];
+
+    var CLASSIFICACOES = [
+      { v:'Super Quente', kt:'cSuperT',  kd:'cSuperD'  },
+      { v:'Quente',       kt:'cQuenteT', kd:'cQuenteD' },
+      { v:'Frio',         kt:'cFrioT',   kd:'cFrioD'   }
+    ];
+
+    /* =====================================================================
+       3. ESTADO
+       ===================================================================== */
+    var TOTAL_STEPS = 5;
+    var currentStep = 1;
+    var sending = false;
+
+    var audioCtx, source, processor, stream;
+    var recBuffers = [], recLength = 0, inputSampleRate = 44100;
+    var recording = false, temAudio = false, audioDuracao = 0;
+    var recTimer = null, recSeconds = 0;
+    var MAX_SECONDS = 55;
+    var ULTIMO_PAYLOAD = null;
+
+    var form = document.getElementById('form');
+    var erro = document.getElementById('erro');
+    var btnAvancar = document.getElementById('btnAvancar');
+    var btnVoltar = document.getElementById('btnVoltar');
+    var btnEnviar = document.getElementById('btnEnviar');
+    var progressBar = document.getElementById('progressBar');
+
+    function $id(id) { return document.getElementById(id); }
+    function val(name) { var el = form.elements[name]; return el ? String(el.value || '').trim() : ''; }
+    function radioVal(name) {
+      var nodes = form.querySelectorAll('input[name="' + name + '"]:checked');
+      return nodes.length ? nodes[0].value : '';
+    }
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* =====================================================================
+       4. MONTAGEM DAS OPÇÕES (dependem do idioma)
+       ===================================================================== */
+    function montarOpcoes() {
+      var respAtual   = radioVal('responsavel');
+      var papelAtual  = radioVal('papel');
+      var classAtual  = radioVal('interesse');
+      var interAtuais = [];
+      form.querySelectorAll('input[name="etapas"]:checked').forEach(function (el) {
+        interAtuais.push(el.value);
+      });
+
+      // Responsáveis + "Outro"
+      var html = RESPONSAVEIS.map(function (n) {
+        return '<label class="choice"><input type="radio" name="responsavel" value="' + esc(n) + '"' +
+          (respAtual === n ? ' checked' : '') + '><span class="choice-face">' + esc(n) + '</span></label>';
+      }).join('');
+      html += '<label class="choice"><input type="radio" name="responsavel" value="Outro"' +
+        (respAtual === 'Outro' ? ' checked' : '') + '><span class="choice-face">' +
+        esc(t('optOutro')) + '</span></label>';
+      $id('gridResponsavel').innerHTML = html;
+
+      // Interesses (produtos da taxonomia — não traduzidos)
+      $id('gridInteresses').innerHTML = PRODUTOS.map(function (p) {
+        return '<label class="choice"><input type="checkbox" name="etapas" value="' + esc(p) + '"' +
+          (interAtuais.indexOf(p) !== -1 ? ' checked' : '') + '><span class="choice-face">' +
+          esc(p) + '</span></label>';
+      }).join('');
+
+      // Papel na decisão
+      $id('gridPapel').innerHTML = PAPEIS.map(function (p) {
+        return '<label class="choice"><input type="radio" name="papel" value="' + esc(p.v) + '"' +
+          (papelAtual === p.v ? ' checked' : '') + '><span class="choice-face">' +
+          esc(t(p.k)) + '</span></label>';
+      }).join('');
+
+      // Classificação
+      $id('gridClassif').innerHTML = CLASSIFICACOES.map(function (c) {
+        return '<label class="classif"><input type="radio" name="interesse" value="' + esc(c.v) + '"' +
+          (classAtual === c.v ? ' checked' : '') + '><span class="classif-face">' +
+          '<span class="classif-title">' + esc(t(c.kt)) + '</span>' +
+          '<span class="classif-desc">' + esc(t(c.kd)) + '</span></span></label>';
+      }).join('');
+
+      ligarResponsavel();
+    }
+
+    // "Outro" abre o campo para digitar o nome
+    function ligarResponsavel() {
+      form.querySelectorAll('input[name="responsavel"]').forEach(function (el) {
+        el.addEventListener('change', function () {
+          $id('respOutroField').hidden = (radioVal('responsavel') !== 'Outro');
+        });
+      });
+      $id('respOutroField').hidden = (radioVal('responsavel') !== 'Outro');
+    }
+
+    function getResponsavel() {
+      return radioVal('responsavel') === 'Outro' ? val('responsavelOutro') : radioVal('responsavel');
+    }
+
+    // Rótulo traduzido de um valor canônico, para exibição no resumo
+    function rotuloPapel(v) {
+      for (var i = 0; i < PAPEIS.length; i++) if (PAPEIS[i].v === v) return t(PAPEIS[i].k);
+      return v;
+    }
+    function rotuloClassif(v) {
+      for (var i = 0; i < CLASSIFICACOES.length; i++) if (CLASSIFICACOES[i].v === v) return t(CLASSIFICACOES[i].kt);
+      return v;
+    }
+
+    /* =====================================================================
+       5. MÁSCARA DE TELEFONE
+       ===================================================================== */
+    $id('whatsapp').addEventListener('input', function () {
+      var digits = this.value.replace(/\D/g, '').substring(0, 11);
+      if (digits.length > 10) {
+        this.value = '(' + digits.substring(0,2) + ') ' + digits.substring(2,7) + '-' + digits.substring(7,11);
+      } else if (digits.length > 6) {
+        this.value = '(' + digits.substring(0,2) + ') ' + digits.substring(2,6) + '-' + digits.substring(6,10);
+      } else if (digits.length > 2) {
+        this.value = '(' + digits.substring(0,2) + ') ' + digits.substring(2);
+      } else if (digits.length > 0) {
+        this.value = '(' + digits;
+      } else {
+        this.value = '';
+      }
+    });
+
+    /* =====================================================================
+       6. NAVEGAÇÃO ENTRE ETAPAS
+       ===================================================================== */
+    function showStep(n) {
+      currentStep = n;
+      form.querySelectorAll('.step').forEach(function (s) {
+        s.hidden = (Number(s.getAttribute('data-step')) !== n);
+      });
+      btnVoltar.hidden = (n === 1);
+      btnAvancar.hidden = (n === TOTAL_STEPS);
+      btnEnviar.hidden = (n !== TOTAL_STEPS);
+      progressBar.style.width = (n / TOTAL_STEPS * 100) + '%';
+      limparErro();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function mostrarErro(chave) { erro.textContent = t(chave); erro.dataset.chave = chave; erro.hidden = false; }
+    function limparErro() { erro.hidden = true; erro.textContent = ''; delete erro.dataset.chave; }
+
+    // Devolve a CHAVE do erro (não o texto), para acompanhar a troca de idioma
+    function validarEtapa(n) {
+      if (n === 1) {
+        if (!radioVal('responsavel')) return 'errResponsavel';
+        if (radioVal('responsavel') === 'Outro' && !val('responsavelOutro')) return 'errRespOutro';
+        if (!val('nome')) return 'errNome';
+        var tel = val('whatsapp').replace(/\D/g, '');
+        if (tel.length < 10 || tel.length > 11) return 'errWhats';
+        var email = val('email');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'errEmail';
+        if (!val('empresa')) return 'errEmpresa';
+      } else if (n === 2) {
+        if (!form.querySelectorAll('input[name="etapas"]:checked').length) return 'errInteresse';
+      } else if (n === 3) {
+        if (!radioVal('papel')) return 'errPapel';
+      } else if (n === 4) {
+        if (!radioVal('interesse')) return 'errClassif';
+      } else if (n === 5) {
+        if (!val('resumoDigitado') && !temAudio) return 'errResumo';
+      }
+      return '';
+    }
+
+    btnAvancar.addEventListener('click', function () {
+      var chave = validarEtapa(currentStep);
+      if (chave) { mostrarErro(chave); return; }
+      showStep(currentStep + 1);
+    });
+    btnVoltar.addEventListener('click', function () { showStep(currentStep - 1); });
+
+    /* =====================================================================
+       7. ABAS TEXTO / ÁUDIO
+       ===================================================================== */
+    document.querySelectorAll('.tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var mode = this.getAttribute('data-mode');
+        document.querySelectorAll('.tab').forEach(function (o) { o.classList.toggle('is-active', o === tab); });
+        document.querySelector('.pane[data-pane="texto"]').hidden = (mode !== 'texto');
+        document.querySelector('.pane[data-pane="audio"]').hidden = (mode !== 'audio');
+        limparErro();
+      });
+    });
+
+    /* =====================================================================
+       8. GRAVADOR DE ÁUDIO
+       DEMO: grava e reproduz localmente. O áudio NÃO é convertido em base64,
+       NÃO é enviado e NÃO é armazenado — vive só como Blob na memória da aba.
+       ===================================================================== */
+    $id('btnRec').addEventListener('click', startRec);
+    $id('btnStop').addEventListener('click', stopRec);
+    $id('btnApagar').addEventListener('click', apagarAudio);
+
+    function startRec() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        mostrarErro('errMicNao');
+        return;
+      }
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+        stream = s;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        inputSampleRate = audioCtx.sampleRate;
+        source = audioCtx.createMediaStreamSource(stream);
+        processor = audioCtx.createScriptProcessor(4096, 1, 1);
+        recBuffers = []; recLength = 0; recording = true; recSeconds = 0;
+        processor.onaudioprocess = function (e) {
+          if (!recording) return;
+          var ch = e.inputBuffer.getChannelData(0);
+          recBuffers.push(new Float32Array(ch));
+          recLength += ch.length;
+        };
+        source.connect(processor);
+        processor.connect(audioCtx.destination);
+        $id('btnRec').hidden = true; $id('btnStop').hidden = false;
+        $id('player').hidden = true; $id('btnApagar').hidden = true;
+        $id('recStatus').textContent = t('recGravando');
+        temAudio = false; audioDuracao = 0;
+        limparErro();
+        recTimer = setInterval(function () {
+          recSeconds++;
+          $id('recTime').textContent = fmt(recSeconds);
+          if (recSeconds >= MAX_SECONDS) stopRec();
+        }, 1000);
+      }).catch(function () {
+        mostrarErro('errMicNegado');
+      });
+    }
+
+    function stopRec() {
+      if (!recording) return;
+      recording = false;
+      clearInterval(recTimer);
+      if (processor) processor.disconnect();
+      if (source) source.disconnect();
+      if (stream) stream.getTracks().forEach(function (tr) { tr.stop(); });
+
+      var merged = mergeBuffers(recBuffers, recLength);
+      var down = downsample(merged, inputSampleRate, 16000);
+      var view = encodeWAV(down, 16000);
+      var blob = new Blob([view], { type: 'audio/wav' });
+
+      var player = $id('player');
+      if (player.src) URL.revokeObjectURL(player.src);
+      player.src = URL.createObjectURL(blob);   // só para ouvir; nada sai daqui
+      player.hidden = false;
+
+      // Libera os buffers brutos: o áudio fica apenas no Blob do player
+      recBuffers = []; recLength = 0;
+
+      temAudio = true; audioDuracao = recSeconds;
+      $id('btnApagar').hidden = false;
+      $id('btnRec').hidden = false; $id('btnStop').hidden = true;
+      $id('recStatus').textContent = t('recPronto');
+      if (audioCtx) audioCtx.close();
+    }
+
+    function apagarAudio() {
+      temAudio = false; audioDuracao = 0;
+      var player = $id('player');
+      if (player.src) URL.revokeObjectURL(player.src);
+      player.hidden = true; player.removeAttribute('src');
+      $id('btnApagar').hidden = true;
+      $id('recTime').textContent = '00:00';
+      $id('recStatus').textContent = t('recInicial');
+    }
+
+    function fmt(s) {
+      var m = Math.floor(s / 60), r = s % 60;
+      return (m < 10 ? '0' + m : m) + ':' + (r < 10 ? '0' + r : r);
+    }
+    function mergeBuffers(bufs, len) {
+      var out = new Float32Array(len), off = 0;
+      for (var i = 0; i < bufs.length; i++) { out.set(bufs[i], off); off += bufs[i].length; }
+      return out;
+    }
+    function downsample(buf, inRate, outRate) {
+      if (outRate >= inRate) return buf;
+      var ratio = inRate / outRate, newLen = Math.round(buf.length / ratio);
+      var out = new Float32Array(newLen), oOff = 0, iOff = 0;
+      while (oOff < newLen) {
+        var next = Math.round((oOff + 1) * ratio), sum = 0, cnt = 0;
+        for (var i = iOff; i < next && i < buf.length; i++) { sum += buf[i]; cnt++; }
+        out[oOff] = cnt ? sum / cnt : 0; oOff++; iOff = next;
+      }
+      return out;
+    }
+    function encodeWAV(samples, rate) {
+      var buffer = new ArrayBuffer(44 + samples.length * 2);
+      var view = new DataView(buffer);
+      function str(off, s) { for (var i = 0; i < s.length; i++) view.setUint8(off + i, s.charCodeAt(i)); }
+      str(0, 'RIFF'); view.setUint32(4, 36 + samples.length * 2, true); str(8, 'WAVE');
+      str(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+      view.setUint32(24, rate, true); view.setUint32(28, rate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+      str(36, 'data'); view.setUint32(40, samples.length * 2, true);
+      var off = 44;
+      for (var i = 0; i < samples.length; i++) {
+        var x = Math.max(-1, Math.min(1, samples[i]));
+        view.setInt16(off, x < 0 ? x * 0x8000 : x * 0x7FFF, true); off += 2;
+      }
+      return view;
+    }
+
+    /* =====================================================================
+       9. ENVIO SIMULADO
+       ===================================================================== */
+    function coletarPayload() {
+      var etapas = [];
+      form.querySelectorAll('input[name="etapas"]:checked').forEach(function (el) { etapas.push(el.value); });
+      return {
+        responsavel: getResponsavel(),
+        nome: val('nome'),
+        whatsapp: val('whatsapp'),
+        email: val('email'),
+        empresa: val('empresa'),
+        etapas: etapas,
+        papel: radioVal('papel'),
+        interesse: radioVal('interesse'),
+        resumoDigitado: val('resumoDigitado'),
+        temAudio: temAudio,
+        audioSegundos: audioDuracao
+      };
+    }
+
+    // Chave sequencial simulada da demo (na versão real viria da base).
+    function proximoProtocolo() {
+      var n = 1;
+      try {
+        n = parseInt(localStorage.getItem('lead_demo_seq') || '0', 10) + 1;
+        localStorage.setItem('lead_demo_seq', String(n));
+      } catch (e) { n = Math.floor(Math.random() * 9000) + 1000; }
+      return 'ABC' + ('0000' + n).slice(-4);
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (sending) return;
+      var chave = validarEtapa(5);
+      if (chave) { mostrarErro(chave); return; }
+
+      sending = true;
+      btnEnviar.disabled = true; btnVoltar.disabled = true;
+      mostrarLoading(temAudio ? 'loadingAudio' : 'loadingSalvar');
+
+      // Pequeno atraso apenas para simular o processamento da versão real
+      setTimeout(function () {
+        esconderLoading();
+        ULTIMO_PAYLOAD = coletarPayload();
+        ULTIMO_PAYLOAD.protocolo = proximoProtocolo();
+        mostrarSucesso();
+      }, 900);
+    });
+
+    function mostrarSucesso() {
+      form.style.display = 'none';
+      document.querySelector('.progress').style.display = 'none';
+      $id('success').hidden = false;
+      desenharSucesso();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function desenharSucesso() {
+      var d = ULTIMO_PAYLOAD;
+      if (!d) return;
+      $id('sucTitulo').textContent = t('sucTitulo');
+      $id('sucTexto').textContent = t('sucTexto');
+      $id('sucProtocolo').textContent = d.protocolo;
+      $id('resumoTitulo').textContent = t('resumoTitulo');
+      $id('resumoNota').textContent = t('resumoNota');
+      $id('btnNovo').textContent = t('btnNovo');
+
+      var linhas = [
+        [t('rResponsavel'), d.responsavel],
+        [t('rNome'),        d.nome],
+        [t('rWhats'),       d.whatsapp],
+        [t('rEmail'),       d.email],
+        [t('rEmpresa'),     d.empresa],
+        [t('rInteresses'),  d.etapas.join(' · ')],
+        [t('rPapel'),       rotuloPapel(d.papel)],
+        [t('rClassif'),     rotuloClassif(d.interesse)],
+        [t('rResumo'),      d.resumoDigitado],
+        [t('rAudio'),       d.temAudio ? t('rAudioSim')(d.audioSegundos) : t('rAudioNao')]
+      ];
+      $id('resumoCorpo').innerHTML = linhas.map(function (l) {
+        return '<div class="resumo-linha"><span class="resumo-k">' + esc(l[0]) + '</span>' +
+          '<span class="resumo-v">' + esc(l[1] || t('rVazio')) + '</span></div>';
+      }).join('');
+    }
+
+    $id('btnNovo').addEventListener('click', function () { window.location.reload(); });
+
+    function mostrarLoading(chave) {
+      $id('loadingMsg').textContent = t(chave);
+      $id('loadingMsg').dataset.chave = chave;
+      $id('loading').hidden = false;
+    }
+    function esconderLoading() { $id('loading').hidden = true; }
+
+    /* =====================================================================
+       10. IDIOMA
+       ===================================================================== */
+    function aplicarTextos() {
+      document.title = t('tituloPagina');
+      document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        el.textContent = t(el.dataset.i18n);
+      });
+      // placeholders
+      $id('inRespOutro').placeholder = t('phRespOutro');
+      $id('inNome').placeholder      = t('phNome');
+      $id('whatsapp').placeholder    = t('phWhats');
+      $id('inEmail').placeholder     = t('phEmail');
+      $id('inEmpresa').placeholder   = t('phEmpresa');
+      $id('inResumo').placeholder    = t('phResumo');
+      // botões
+      btnAvancar.textContent = t('btnContinuar');
+      btnVoltar.textContent  = t('btnVoltar');
+      btnEnviar.textContent  = t('btnSalvar');
+      // gravador
+      $id('btnRec').textContent    = t('recBtnGravar');
+      $id('btnStop').textContent   = t('recBtnParar');
+      $id('btnApagar').textContent = t('recBtnApagar');
+      $id('recNota').textContent   = t('recNota');
+      $id('recStatus').textContent = recording ? t('recGravando') : (temAudio ? t('recPronto') : t('recInicial'));
+      // erro visível e loading acompanham o idioma
+      if (!erro.hidden && erro.dataset.chave) erro.textContent = t(erro.dataset.chave);
+      var lm = $id('loadingMsg');
+      if (lm.dataset.chave) lm.textContent = t(lm.dataset.chave);
+      $id('grupoIdioma').setAttribute('aria-label', 'Idioma / Language');
+    }
+
+    function marcarBotoesIdioma() {
+      $id('btnPT').classList.toggle('ativo', IDIOMA === 'pt');
+      $id('btnEN').classList.toggle('ativo', IDIOMA === 'en');
+    }
+
+    // Troca o idioma e redesenha tudo que depende de texto, preservando o preenchimento.
+    window.definirIdioma = function (idioma) {
+      IDIOMA = (idioma === 'en' ? 'en' : 'pt');
+      try { localStorage.setItem('demo_idioma', IDIOMA); } catch (e) {}
+      document.documentElement.lang = (IDIOMA === 'pt' ? 'pt-BR' : 'en');
+      marcarBotoesIdioma();
+      aplicarTextos();
+      montarOpcoes();
+      if (!$id('success').hidden) desenharSucesso();
+    };
+
+    // Primeiro carregamento: usa o salvo; sem escolha, detecta o idioma do navegador.
+    function iniciarIdioma() {
+      var idioma = 'pt';
+      try {
+        idioma = localStorage.getItem('demo_idioma') ||
+          ((navigator.language || 'pt').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en');
+      } catch (e) {}
+      IDIOMA = (idioma === 'en' ? 'en' : 'pt');
+      document.documentElement.lang = (IDIOMA === 'pt' ? 'pt-BR' : 'en');
+      marcarBotoesIdioma();
+    }
+
+    /* =====================================================================
+       11. INÍCIO
+       ===================================================================== */
+    iniciarIdioma();
+    aplicarTextos();
+    montarOpcoes();
+    showStep(1);
+  })();
+  </script>
+</body>
+</html>

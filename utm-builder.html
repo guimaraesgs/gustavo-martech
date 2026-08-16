@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UTM Builder — Demo | Empresa ABC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600;700;800&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens visuais ─────────────────────────────────────────── */
+:root{
+  --green:#00c46e;
+  --green-bright:#25e07f;
+  --green-dk:#0a6b3f;
+  --blue-dk:#14202b;
+  --blue-inst:#16232f;
+  --blue-xdk:#0a1a13;
+  --gray:#5d6b77;
+  --gray-lt:#eceff1;
+  --bg:#f4f6f7;
+  --white:#ffffff;
+  --red:#e53e3e;
+  --amber:#b7791f;
+  --amber-bg:#fffaf0;
+  --shadow:0 2px 16px rgba(0,0,0,.08);
+  --radius:12px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--blue-dk);min-height:100vh}
+h1,h2,h3,h4{font-family:'Work Sans',sans-serif}
+
+/* ── Layout ───────────────────────────────────────────────── */
+#app{display:flex;flex-direction:column;min-height:100vh}
+#app.hidden{display:none}
+
+/* ── Header — gradiente escuro ───────────────────────────── */
+header{
+  background:radial-gradient(130% 120% at 22% 12%,#0e3a26 0%,#0a1a13 48%,#060d0a 100%);
+  padding:0 24px;height:60px;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:20;flex-shrink:0
+}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{
+  width:34px;height:34px;background:var(--green);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Work Sans',sans-serif;font-weight:800;font-size:17px;
+  color:var(--blue-xdk);flex-shrink:0
+}
+.logo-name{font-family:'Work Sans',sans-serif;font-weight:700;font-size:15px;color:var(--white);letter-spacing:-0.01em}
+.logo-sub{color:var(--green);font-size:11px;margin-top:1px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase}
+.demo-chip{
+  background:#f6c453;color:#5a3d00;font-family:'Work Sans',sans-serif;
+  font-weight:800;font-size:11px;letter-spacing:.1em;
+  padding:4px 12px;border-radius:20px;text-transform:uppercase
+}
+.header-acoes{display:flex;align-items:center;gap:12px;flex-shrink:0}
+
+/* ── Interruptor de idioma PT | EN ────────────────────────── */
+.interruptor-idioma{
+  display:flex;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;padding:2px;flex-shrink:0
+}
+.interruptor-idioma button{
+  background:none;border:none;border-radius:8px;padding:6px 10px;
+  font-size:11.5px;font-weight:800;letter-spacing:.06em;
+  color:rgba(255,255,255,.55);transition:all .15s;cursor:pointer;
+  font-family:'Work Sans',sans-serif
+}
+.interruptor-idioma button:hover{color:var(--white)}
+.interruptor-idioma button.ativo{
+  background:var(--green);color:var(--blue-xdk);
+  box-shadow:0 2px 8px rgba(0,0,0,.25)
+}
+
+/* ── Faixa de demo ───────────────────────────────────────── */
+#demo-strip{
+  background:var(--amber-bg);border-bottom:1px solid #f6e0b8;
+  padding:8px 24px;text-align:center;font-size:12px;color:var(--amber)
+}
+#demo-strip strong{font-family:'Work Sans',sans-serif;letter-spacing:.04em}
+
+/* ── Progress ─────────────────────────────────────────────── */
+#progress-wrap{background:#080f0b;padding:14px 24px 12px;flex-shrink:0;border-bottom:1px solid rgba(0,196,110,.08)}
+.step-labels{display:flex;justify-content:space-between;margin-bottom:8px;gap:2px}
+.step-lbl{font-size:9px;font-family:'Work Sans',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:rgba(255,255,255,.22);transition:color .3s;white-space:nowrap}
+.step-lbl.active{color:var(--green)}
+.step-lbl.done{color:rgba(255,255,255,.42)}
+.progress-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s ease;width:0%}
+
+/* ── Main ─────────────────────────────────────────────────── */
+main{flex:1;max-width:680px;width:100%;margin:0 auto;padding:32px 20px 100px}
+.step{display:none}
+.step.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── Step header ──────────────────────────────────────────── */
+.step-header{margin-bottom:28px}
+.step-badge{
+  display:inline-block;background:var(--green);color:var(--blue-xdk);
+  font-family:'Work Sans',sans-serif;font-weight:700;font-size:11px;
+  padding:3px 10px;border-radius:20px;text-transform:uppercase;
+  letter-spacing:.6px;margin-bottom:10px
+}
+.step-title{font-size:22px;font-weight:700;color:var(--blue-dk);margin-bottom:6px;letter-spacing:-0.02em}
+.step-subtitle{font-size:14px;color:var(--gray)}
+
+/* ── Card ─────────────────────────────────────────────────── */
+.card{background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);margin-bottom:16px}
+.link-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.link-card-header{padding:10px 20px;border-bottom:1px solid var(--gray-lt)}
+.link-card-body{padding:20px 20px 4px}
+.link-badge{display:inline-block;font-family:'Work Sans',sans-serif;font-weight:700;font-size:12px;padding:4px 14px;border-radius:20px}
+
+/* ── Quantidade ───────────────────────────────────────────── */
+.qty-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:6px 0}
+.qty-btn{
+  height:52px;border:1.5px solid var(--gray-lt);border-radius:8px;
+  background:var(--white);font-family:'Work Sans',sans-serif;
+  font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--blue-dk)
+}
+.qty-btn:hover{border-color:var(--green);color:var(--green)}
+.qty-btn.selected{background:var(--green);border-color:var(--green);color:var(--blue-xdk)}
+.qty-info{font-size:13px;color:var(--gray);margin-top:10px}
+
+/* ── Campos ───────────────────────────────────────────────── */
+.field{margin-bottom:20px}
+.field:last-child{margin-bottom:0}
+label{display:block;font-size:13px;font-weight:500;color:var(--blue-dk);margin-bottom:6px}
+label .req{color:var(--green);margin-left:2px}
+label .hint{display:block;font-size:11px;font-weight:400;color:var(--gray);margin-top:2px}
+select,input[type="text"],input[type="url"]{
+  width:100%;height:44px;padding:0 14px;
+  border:1.5px solid var(--gray-lt);border-radius:8px;
+  font-family:'Roboto',sans-serif;font-size:14px;color:var(--blue-dk);
+  background:var(--white);outline:none;
+  transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none
+}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235d6b77' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer
+}
+select:focus,input:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(0,196,110,.14)
+}
+.field-err{font-size:12px;color:var(--red);margin-top:5px;display:none}
+.field.invalid select,.field.invalid input{border-color:var(--red)}
+.field.invalid .field-err{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:500px){.g2{grid-template-columns:1fr}}
+
+/* ── Ajuda "?" ────────────────────────────────────────────── */
+.help-ic{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:16px;height:16px;border-radius:50%;
+  border:1.5px solid var(--gray);color:var(--gray);background:var(--white);
+  font-family:'Work Sans',sans-serif;font-size:10px;font-weight:700;
+  cursor:pointer;margin-left:6px;vertical-align:middle;line-height:1;padding:0;
+  transition:all .2s;flex-shrink:0
+}
+.help-ic:hover{border-color:var(--green);color:var(--green)}
+.help-ic.open{background:var(--green);border-color:var(--green);color:var(--blue-xdk)}
+.help-box{
+  display:none;background:#f0faf5;border-left:3px solid var(--green);
+  border-radius:0 6px 6px 0;padding:8px 12px;font-size:12px;
+  color:var(--blue-inst);margin:0 0 8px;line-height:1.5
+}
+.help-box.show{display:block}
+
+/* ── Histórico do link ────────────────────────────────────── */
+.hist{
+  background:#f0faf5;border:1px solid rgba(0,196,110,.25);
+  border-radius:8px;padding:10px 14px;margin-bottom:18px
+}
+.hist-title{
+  font-family:'Work Sans',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.6px;text-transform:uppercase;color:var(--green-dk);margin-bottom:6px
+}
+.hist-row{display:flex;gap:10px;font-size:12px;padding:2px 0;align-items:baseline}
+.hist-lbl{color:var(--gray);flex-shrink:0;min-width:118px;font-size:11px}
+.hist-val{font-family:'Roboto Mono',monospace;color:var(--blue-dk);word-break:break-all}
+@media(max-width:500px){.hist-row{flex-direction:column;gap:1px}.hist-lbl{min-width:0}}
+
+/* ── Replicar ─────────────────────────────────────────────── */
+.rep-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  background:none;border:none;color:var(--green-dk);
+  font-family:'Work Sans',sans-serif;font-size:11px;font-weight:700;
+  cursor:pointer;padding:5px 0 0;letter-spacing:.2px;transition:color .2s
+}
+.rep-btn:hover{color:var(--green)}
+.rep-btn.done{color:var(--green)}
+.rep-step{
+  border-top:1px dashed var(--gray-lt);padding:12px 20px;
+  background:#fbfdfc;text-align:center
+}
+.btn-rep-step{
+  background:var(--white);border:1.5px solid var(--green);color:var(--green-dk);
+  border-radius:8px;height:38px;padding:0 18px;
+  font-family:'Work Sans',sans-serif;font-weight:700;font-size:13px;
+  cursor:pointer;transition:all .2s
+}
+.btn-rep-step:hover{background:var(--green);color:var(--blue-xdk)}
+.btn-rep-step.done{background:var(--green);border-color:var(--green);color:var(--blue-xdk)}
+
+/* ── Preview ──────────────────────────────────────────────── */
+.preview-box{background:var(--bg);border:1.5px dashed var(--gray-lt);border-radius:8px;padding:12px 16px;margin-top:20px}
+.preview-box .plabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:4px}
+.preview-box .pvalue{font-size:13px;color:var(--blue-dk);font-family:'Roboto Mono',monospace;word-break:break-all}
+.preview-box .pvalue.empty{color:var(--gray);font-style:italic;font-family:'Roboto',sans-serif;font-size:12px}
+
+/* ── Review table ─────────────────────────────────────────── */
+.rtable{width:100%;border-collapse:collapse}
+.rtable tr{border-bottom:1px solid var(--gray-lt)}
+.rtable tr:last-child{border-bottom:none}
+.rtable td{padding:10px 0;font-size:13px;vertical-align:top}
+.rtable td:first-child{color:var(--gray);font-weight:500;width:42%;padding-right:16px}
+.rtable td:last-child{color:var(--blue-dk);word-break:break-all}
+.rtable .empty-val{color:var(--gray);font-style:italic}
+
+/* ── Nav ──────────────────────────────────────────────────── */
+#nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--white);border-top:1px solid var(--gray-lt);
+  padding:14px 24px;display:flex;gap:12px;justify-content:flex-end;z-index:20
+}
+.btn{
+  height:44px;padding:0 22px;border:none;border-radius:8px;
+  font-family:'Work Sans',sans-serif;font-weight:700;font-size:14px;
+  cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px
+}
+.btn-back{background:var(--white);color:var(--gray);border:1.5px solid var(--gray-lt)}
+.btn-back:hover{border-color:var(--gray);color:var(--blue-dk)}
+.btn-next{background:var(--green);color:var(--blue-xdk)}
+.btn-next:hover{background:var(--green-dk);color:var(--white)}
+.btn-submit{background:var(--blue-inst);color:var(--white);padding:0 28px}
+.btn-submit:hover:not(:disabled){background:var(--blue-xdk)}
+.btn-submit:disabled{background:var(--gray);cursor:not-allowed}
+
+/* ── Erro ─────────────────────────────────────────────────── */
+#err-banner{
+  background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;
+  padding:12px 16px;margin-bottom:16px;display:none;
+  align-items:flex-start;gap:10px;font-size:13px;color:var(--red)
+}
+#err-banner.show{display:flex}
+#err-banner button{margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:20px;line-height:1;flex-shrink:0;padding:0}
+
+/* ── Tela de resultado ────────────────────────────────────── */
+#result-screen{display:none;flex-direction:column;min-height:100vh}
+#result-screen.visible{display:flex}
+.result-main{max-width:680px;width:100%;margin:0 auto;padding:32px 20px 48px}
+.result-hero{text-align:center;margin-bottom:32px}
+.result-icon{
+  width:60px;height:60px;background:rgba(0,196,110,.12);border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:16px;color:var(--green)
+}
+.result-hero h2{font-size:24px;color:var(--blue-dk);margin-bottom:8px;letter-spacing:-0.02em}
+.result-hero p{font-size:14px;color:var(--gray)}
+
+/* ── Result card ──────────────────────────────────────────── */
+.result-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.rc-header{
+  background:radial-gradient(130% 200% at 0% 50%,#0e3a26 0%,var(--blue-xdk) 60%);
+  padding:14px 20px;display:flex;align-items:center;gap:10px
+}
+.rc-key{
+  background:var(--green);color:var(--blue-xdk);
+  font-family:'Work Sans',sans-serif;font-weight:800;font-size:13px;
+  padding:3px 12px;border-radius:20px
+}
+.rc-header span{color:rgba(255,255,255,.45);font-size:13px}
+.rc-fields{padding:20px}
+.rc-field{margin-bottom:16px}
+.rc-field:last-child{margin-bottom:0}
+.rc-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--gray);margin-bottom:5px
+}
+.rc-value{
+  font-size:12px;color:var(--blue-dk);word-break:break-all;
+  background:var(--bg);padding:8px 12px;border-radius:6px;
+  border:1px solid var(--gray-lt);font-family:'Roboto Mono',monospace;line-height:1.5
+}
+.url-row{display:flex;gap:8px;align-items:stretch}
+.url-row .rc-value{flex:1;min-width:0}
+.btn-copy{
+  padding:0 14px;background:var(--blue-inst);color:var(--white);
+  border:none;border-radius:6px;font-family:'Work Sans',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;
+  white-space:nowrap;flex-shrink:0
+}
+.btn-copy:hover{background:var(--blue-xdk)}
+.btn-copy.copied{background:var(--green);color:var(--blue-xdk)}
+
+/* ── UTM breakdown ────────────────────────────────────────── */
+.rc-utm-sep{margin:14px 0 8px;padding-bottom:7px;border-bottom:1px solid rgba(0,196,110,.22)}
+.rc-utm-sep span{
+  font-size:10px;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--green-dk)
+}
+.rc-value--mono{font-family:'Roboto Mono','Consolas',monospace;font-size:12px;word-break:break-all}
+
+/* ── Resultado — ações ────────────────────────────────────── */
+.result-actions{text-align:center;padding:28px 0 0}
+.btn-new{
+  background:var(--green);color:var(--blue-xdk);height:48px;padding:0 36px;
+  border:none;border-radius:8px;font-family:'Work Sans',sans-serif;
+  font-weight:800;font-size:15px;cursor:pointer;transition:background .2s
+}
+.btn-new:hover{background:var(--green-dk);color:var(--white)}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <div><div class="logo-name">UTM Builder</div><div class="logo-sub">Empresa ABC</div></div>
+    </div>
+    <div class="header-acoes">
+      <span class="demo-chip" data-i18n="chipDemo"></span>
+      <div class="interruptor-idioma" role="group" aria-label="Idioma / Language">
+        <button id="btnPT" data-lang="pt" onclick="definirIdioma('pt')">PT</button>
+        <button id="btnEN" data-lang="en" onclick="definirIdioma('en')">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="demo-strip">
+    <strong data-i18n="faixaDemoTitulo"></strong><span data-i18n="faixaDemoTexto"></span>
+  </div>
+
+  <div id="progress-wrap">
+    <div class="step-labels">
+      <span class="step-lbl" data-s="1" data-i18n="passo1"></span>
+      <span class="step-lbl" data-s="2" data-i18n="passo2"></span>
+      <span class="step-lbl" data-s="3" data-i18n="passo3"></span>
+      <span class="step-lbl" data-s="4" data-i18n="passo4"></span>
+      <span class="step-lbl" data-s="5" data-i18n="passo5"></span>
+      <span class="step-lbl" data-s="6" data-i18n="passo6"></span>
+      <span class="step-lbl" data-s="7" data-i18n="passo7"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+
+  <main>
+    <div id="err-banner">
+      <span>⚠️</span><span id="err-msg"></span>
+      <button onclick="hideErr()">×</button>
+    </div>
+
+    <!-- ETAPA 1: estática -->
+    <div class="step active" id="step-1">
+      <div class="step-header">
+        <div class="step-badge" id="badge-step1"></div>
+        <h2 class="step-title" data-i18n="e1Titulo"></h2>
+        <p class="step-subtitle" data-i18n="e1Sub"></p>
+      </div>
+      <div class="card">
+        <div class="field">
+          <label><span data-i18n="e1Label"></span> <span class="req">*</span></label>
+          <div class="qty-grid">
+            <button class="qty-btn selected" id="qty-1"  onclick="setNumLinks(1)">1</button>
+            <button class="qty-btn"          id="qty-2"  onclick="setNumLinks(2)">2</button>
+            <button class="qty-btn"          id="qty-3"  onclick="setNumLinks(3)">3</button>
+            <button class="qty-btn"          id="qty-4"  onclick="setNumLinks(4)">4</button>
+            <button class="qty-btn"          id="qty-5"  onclick="setNumLinks(5)">5</button>
+            <button class="qty-btn"          id="qty-6"  onclick="setNumLinks(6)">6</button>
+            <button class="qty-btn"          id="qty-7"  onclick="setNumLinks(7)">7</button>
+            <button class="qty-btn"          id="qty-8"  onclick="setNumLinks(8)">8</button>
+            <button class="qty-btn"          id="qty-9"  onclick="setNumLinks(9)">9</button>
+            <button class="qty-btn"          id="qty-10" onclick="setNumLinks(10)">10</button>
+          </div>
+          <div class="qty-info" id="qty-info"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ETAPAS 2–7: geradas por JS -->
+    <div class="step" id="step-2"></div>
+    <div class="step" id="step-3"></div>
+    <div class="step" id="step-4"></div>
+    <div class="step" id="step-5"></div>
+    <div class="step" id="step-6"></div>
+    <div class="step" id="step-7"></div>
+  </main>
+
+  <div id="nav">
+    <button class="btn btn-back"   id="btn-back"   style="display:none" onclick="goBack()" data-i18n="btnVoltar"></button>
+    <button class="btn btn-next"   id="btn-next"   onclick="goNext()"></button>
+    <button class="btn btn-submit" id="btn-submit" style="display:none" onclick="handleSubmit()"></button>
+  </div>
+</div>
+
+<div id="result-screen">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <div><div class="logo-name">UTM Builder</div><div class="logo-sub">Empresa ABC</div></div>
+    </div>
+    <div class="header-acoes">
+      <span class="demo-chip" data-i18n="chipDemo"></span>
+      <div class="interruptor-idioma" role="group" aria-label="Idioma / Language">
+        <button id="btnPT-res" data-lang="pt" onclick="definirIdioma('pt')">PT</button>
+        <button id="btnEN-res" data-lang="en" onclick="definirIdioma('en')">EN</button>
+      </div>
+    </div>
+  </header>
+  <div class="result-main">
+    <div class="result-hero">
+      <div class="result-icon">✓</div>
+      <h2 id="result-title"></h2>
+      <p data-i18n="resSub"></p>
+    </div>
+    <div id="result-container"></div>
+    <div class="result-actions">
+      <button class="btn-new" onclick="resetApp()" data-i18n="btnNovos"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+//  DICIONARIO PT/EN — chave unica de traducao de toda a interface.
+//  REGRA: o conjunto de chaves de `pt` e de `en` e IDENTICO.
+//  Frases com numero sao FUNCOES (o plural em ingles nao e mecanico).
+// =====================================================================
+var TEXTOS = {
+  pt: {
+    tituloPagina:'UTM Builder — Demo | Empresa ABC',
+    chipDemo:'Demo',
+    faixaDemoTitulo:'MODO DEMONSTRAÇÃO',
+    faixaDemoTexto:' — nenhum dado é salvo na planilha de taxonomia. Os links gerados aqui são apenas exemplos.',
+
+    /* Progresso */
+    passo1:'Qtd', passo2:'Identificação', passo3:'Campanha', passo4:'Mídia',
+    passo5:'Criativo', passo6:'Segmentação', passo7:'Revisão',
+
+    /* Etapa 1 */
+    etapaBadge:function (n, total) { return 'Etapa ' + n + ' de ' + total; },
+    e1Titulo:'Quantidade de Links',
+    e1Sub:'Quantos links UTM deseja criar nesta sessão?',
+    e1Label:'Selecione a quantidade',
+    qtdInfo:function (n) { return n === 1 ? '1 link será criado' : n + ' links serão criados'; },
+
+    /* Rótulos dos campos */
+    lbl_equipe:'Equipe',
+    lbl_url_destino:'URL de Destino',
+    lbl_campanha:'Campanha',
+    lbl_regional:'Regional',
+    lbl_produto:'Produto',
+    lbl_mercado:'Mercado',
+    lbl_veiculo:'Veículo',
+    lbl_canal:'Canal',
+    lbl_media:'Tipo de Mídia',
+    lbl_tipo_compra:'Tipo de Compra',
+    lbl_tipo_criativo:'Tipo de Criativo',
+    lbl_dimensao_peca:'Dimensão / Secundagem',
+    lbl_assunto_criativo:'Assunto do Criativo',
+    lbl_tipo_acao:'Tipo de Ação',
+    lbl_etapa_funil:'Etapa do Funil',
+    lbl_tipo_segmentacao:'Tipo de Segmentação',
+    lbl_nome_segmentacao:'Nome da Segmentação (opcional)',
+
+    /* Ajuda do ícone "?" */
+    help_equipe:'Essa campanha pertence a qual estratégia da empresa? Define a equipe responsável pelo link.',
+    help_url_destino:'Página para onde a pessoa vai ao clicar no anúncio. Pode colar com ou sem https:// no começo.',
+    help_campanha:'Qual o tema central da minha campanha?',
+    help_regional:'É uma campanha para alguma unidade específica ou da matriz?',
+    help_produto:'Qual produto da empresa é o foco da campanha?',
+    help_mercado:'É voltada para algum segmento específico ou global?',
+    help_veiculo:'Em qual plataforma a campanha será veiculada?',
+    help_canal:'Qual canal de mídia vai ser utilizado para essa veiculação?',
+    help_media:'Como essa mídia será vista pelo usuário final?',
+    help_tipo_compra:'Como essa campanha será mensurada (orgânico, pago, etc.)?',
+    help_tipo_criativo:'Qual tipo de mídia será utilizada (imagem, vídeo, carrossel, etc.)?',
+    help_dimensao_peca:'Esse criativo possui alguma dimensão ou duração específica?',
+    help_assunto_criativo:'Tema do criativo, em letras minúsculas e underscore. Compõe o nome do criativo (utm_content).',
+    help_tipo_acao:'É uma ação inbound ou outbound?',
+    help_etapa_funil:'Qual a etapa do funil é o foco dessa campanha?',
+    help_tipo_segmentacao:'Qual tipo de segmentação será feita?',
+    help_nome_segmentacao:'Nome específico da segmentação, se houver (ex: remarketing_site). Pode deixar em branco.',
+    ajudaAria:function (rotulo) { return 'Ajuda: ' + rotulo; },
+
+    /* Etapas 2–7 */
+    stepTitulo2:'Identificação', stepSub2:'Para qual equipe e página este link será criado?',
+    stepTitulo3:'Campanha',      stepSub3:'A qual campanha este link pertence?',
+    stepTitulo4:'Mídia e Canal', stepSub4:'Onde este anúncio vai rodar e como é comprado?',
+    stepTitulo5:'Criativo',      stepSub5:'Como é o criativo deste anúncio?',
+    stepTitulo6:'Segmentação',   stepSub6:'Como está segmentado o grupo de anúncios?',
+    stepTitulo7:'Revisão',       stepSub7:'Confirme os dados antes de gerar os links UTM.',
+
+    /* Dicas e placeholders */
+    hint_url_destino:'Ex: www.seusite.com.br/pagina',
+    hint_assunto_criativo:'Apenas letras minúsculas e underscore. Será normalizado automaticamente.',
+    hint_nome_segmentacao:'Opcional. Ex: remarketing_site',
+    ph_url_destino:'www.seusite.com.br/pagina',
+    ph_assunto_criativo:'ex: gestao_pessoas_pedro',
+    ph_nome_segmentacao:'ex: remarketing_site',
+    selecione:'Selecione…',
+
+    /* Previews */
+    prevCampanha:'Preview — campaign_name',
+    prevCriativo:'Preview — nome_criativo (ABC gerado automaticamente)',
+    prevAdgroup:'Preview — adgroup_adset',
+    prevVazio:'Preencha os campos acima…',
+
+    /* Histórico do link */
+    histTitulo:'Já preenchido neste link',
+    rotuloLink:function (n) { return 'Link ' + n; },
+
+    /* Replicar */
+    repTodos:'⧉ Replicar para todos',
+    repTodosOk:'✓ Replicado!',
+    repEtapa:'⧉ Replicar esta etapa para os próximos links',
+    repEtapaOk:'✓ Etapa replicada para todos os links!',
+
+    /* Navegação */
+    btnVoltar:'← Voltar',
+    btnAvancar:'Avançar →',
+    btnRevisar:'Revisar →',
+    btnGerar:'Gerar UTM ✓',
+    btnGerarN:function (n) { return 'Gerar ' + n + ' UTMs ✓'; },
+    gerando:'Gerando…',
+    gerandoN:function (n) { return 'Gerando ' + n + ' links…'; },
+
+    /* Resultado */
+    resTitulo:'Link gerado com sucesso!',
+    resTituloN:function (ok, total) { return ok + ' de ' + total + ' links gerados com sucesso!'; },
+    resSub:'Modo demonstração — nada foi salvo na planilha de taxonomia.',
+    resLinkGerado:'Link gerado (demo)',
+    rcChave:'Chave Única',
+    rcCampaign:'Campaign Name',
+    rcAdgroup:'Adgroup / Adset',
+    rcCreative:'Ad Creative',
+    rcUrl:'URL Final (UTM)',
+    rcUtmSep:'Parâmetros UTM',
+    btnCopiar:'Copiar',
+    btnCopiado:'Copiado!',
+    btnNovos:'+ Gerar novos links',
+
+    /* Erros */
+    errObrigatorio:'Campo obrigatório.',
+    errQtd:'Selecione a quantidade de links.'
+  },
+
+  en: {
+    tituloPagina:'UTM Builder — Demo | Empresa ABC',
+    chipDemo:'Demo',
+    faixaDemoTitulo:'DEMO MODE',
+    faixaDemoTexto:' — no data is saved to the taxonomy sheet. The links generated here are only examples.',
+
+    /* Progresso */
+    passo1:'Qty', passo2:'Identification', passo3:'Campaign', passo4:'Media',
+    passo5:'Creative', passo6:'Targeting', passo7:'Review',
+
+    /* Etapa 1 */
+    etapaBadge:function (n, total) { return 'Step ' + n + ' of ' + total; },
+    e1Titulo:'Number of Links',
+    e1Sub:'How many UTM links do you want to create in this session?',
+    e1Label:'Select the quantity',
+    qtdInfo:function (n) { return n === 1 ? '1 link will be created' : n + ' links will be created'; },
+
+    /* Rótulos dos campos */
+    lbl_equipe:'Team',
+    lbl_url_destino:'Destination URL',
+    lbl_campanha:'Campaign',
+    lbl_regional:'Region',
+    lbl_produto:'Product',
+    lbl_mercado:'Market',
+    lbl_veiculo:'Platform',
+    lbl_canal:'Channel',
+    lbl_media:'Media Type',
+    lbl_tipo_compra:'Buying Type',
+    lbl_tipo_criativo:'Creative Type',
+    lbl_dimensao_peca:'Dimensions / Duration',
+    lbl_assunto_criativo:'Creative Subject',
+    lbl_tipo_acao:'Action Type',
+    lbl_etapa_funil:'Funnel Stage',
+    lbl_tipo_segmentacao:'Targeting Type',
+    lbl_nome_segmentacao:'Targeting Name (optional)',
+
+    /* Ajuda do ícone "?" */
+    help_equipe:'Which company strategy does this campaign belong to? It defines the team that owns the link.',
+    help_url_destino:'The page people land on when they click the ad. You can paste it with or without https:// at the start.',
+    help_campanha:'What is the core theme of my campaign?',
+    help_regional:'Is this campaign for a specific business unit or for headquarters?',
+    help_produto:'Which company product is the focus of the campaign?',
+    help_mercado:'Is it aimed at a specific market segment or at all of them?',
+    help_veiculo:'Which platform will run the campaign?',
+    help_canal:'Which media channel will be used for this placement?',
+    help_media:'How will this media be seen by the end user?',
+    help_tipo_compra:'How will this campaign be measured (organic, paid, etc.)?',
+    help_tipo_criativo:'What kind of media will be used (image, video, carousel, etc.)?',
+    help_dimensao_peca:'Does this creative have a specific size or duration?',
+    help_assunto_criativo:'Creative theme, in lowercase with underscores. It makes up the creative name (utm_content).',
+    help_tipo_acao:'Is this an inbound or an outbound action?',
+    help_etapa_funil:'Which funnel stage is the focus of this campaign?',
+    help_tipo_segmentacao:'What kind of targeting will be applied?',
+    help_nome_segmentacao:'Specific targeting name, if there is one (e.g. remarketing_site). You can leave it blank.',
+    ajudaAria:function (rotulo) { return 'Help: ' + rotulo; },
+
+    /* Etapas 2–7 */
+    stepTitulo2:'Identification',  stepSub2:'Which team and page is this link being created for?',
+    stepTitulo3:'Campaign',        stepSub3:'Which campaign does this link belong to?',
+    stepTitulo4:'Media & Channel', stepSub4:'Where will this ad run and how is it bought?',
+    stepTitulo5:'Creative',        stepSub5:'What is the creative for this ad like?',
+    stepTitulo6:'Targeting',       stepSub6:'How is this ad group targeted?',
+    stepTitulo7:'Review',          stepSub7:'Check the details before generating the UTM links.',
+
+    /* Dicas e placeholders */
+    hint_url_destino:'E.g. www.yoursite.com/page',
+    hint_assunto_criativo:'Lowercase letters and underscores only. It will be normalized automatically.',
+    hint_nome_segmentacao:'Optional. E.g. remarketing_site',
+    ph_url_destino:'www.yoursite.com/page',
+    ph_assunto_criativo:'e.g. people_management_pedro',
+    ph_nome_segmentacao:'e.g. remarketing_site',
+    selecione:'Select…',
+
+    /* Previews */
+    prevCampanha:'Preview — campaign_name',
+    prevCriativo:'Preview — ad_creative (ABC auto-generated)',
+    prevAdgroup:'Preview — adgroup_adset',
+    prevVazio:'Fill in the fields above…',
+
+    /* Histórico do link */
+    histTitulo:'Already filled in for this link',
+    rotuloLink:function (n) { return 'Link ' + n; },
+
+    /* Replicar */
+    repTodos:'⧉ Replicate to all',
+    repTodosOk:'✓ Replicated!',
+    repEtapa:'⧉ Replicate this step to the following links',
+    repEtapaOk:'✓ Step replicated to all links!',
+
+    /* Navegação */
+    btnVoltar:'← Back',
+    btnAvancar:'Next →',
+    btnRevisar:'Review →',
+    btnGerar:'Generate UTM ✓',
+    btnGerarN:function (n) { return 'Generate ' + n + ' UTMs ✓'; },
+    gerando:'Generating…',
+    gerandoN:function (n) { return 'Generating ' + n + ' links…'; },
+
+    /* Resultado */
+    resTitulo:'Link generated successfully!',
+    resTituloN:function (ok, total) { return ok + ' of ' + total + ' links generated successfully!'; },
+    resSub:'Demo mode — nothing was saved to the taxonomy sheet.',
+    resLinkGerado:'Link generated (demo)',
+    rcChave:'Unique Key',
+    rcCampaign:'Campaign Name',
+    rcAdgroup:'Adgroup / Adset',
+    rcCreative:'Ad Creative',
+    rcUrl:'Final URL (UTM)',
+    rcUtmSep:'UTM Parameters',
+    btnCopiar:'Copy',
+    btnCopiado:'Copied!',
+    btnNovos:'+ Generate new links',
+
+    /* Erros */
+    errObrigatorio:'Required field.',
+    errQtd:'Select the number of links.'
+  }
+};
+
+var IDIOMA = 'pt';
+function t(chave) {
+  var v = (TEXTOS[IDIOMA] || TEXTOS.pt)[chave];
+  if (v === undefined) v = TEXTOS.pt[chave];
+  return v === undefined ? '' : v;
+}
+
+// =====================================================================
+//  VERSAO DEMO — Empresa ABC (ficticia). Sem conexao com planilha.
+//  Os validadores abaixo sao fixos. Para atualizar qualquer lista de
+//  opcoes, basta editar DEMO_VALIDATORS.
+// =====================================================================
+var DEMO_VALIDATORS = {
+  equipe: ['Branding','Content','Events','Growth','Intelligence','Martech','Social Media'],
+  campanha: [
+    'campanha-gestao-financeira','campanha-gestao-logistica',
+    'campanha-gestao-empresarial','campanha-gestao-rh',
+    'campanha-gestao-comercial','campanha-institucional'
+  ],
+  regional: [
+    'regional-sp','regional-mg','regional-rj','regional-ce',
+    'regional-am','regional-df','regional-pr','matriz'
+  ],
+  produto: ['recrutador','vendedor','calculador','otimizador','contabilizador','tributador'],
+  mercado: ['servico','industria','varejo','distribuicao','agro','global'],
+  veiculo: [
+    'linkedin','facebook','instagram','meta','tiktok',
+    'google','youtube','portais','eventos','whatsapp'
+  ],
+  canal: [
+    'demandgen','email','nativo','newsletter','organico',
+    'outdoor','paid','pmax','search','tv','impresso'
+  ],
+  media: ['app','display','email','paid','paid_social','qrcode','video','demandgen'],
+  tipo_compra: ['cpc','cpl','cpm','cpv','NA','pmax'],
+  tipo_criativo: [
+    'audio','carrossel','display','estatico','infeed','mensagem',
+    'post','qrcode','randomico','reels','stories','text','video'
+  ],
+  dimensao_peca: [
+    '1080x1080','1080x1440','1080x1920','meta_random','NA',
+    'seg_10','seg_15','seg_30','seg_45','seg_60','seg_90'
+  ],
+  tipo_acao: ['inbound','outbound'],
+  etapa_funil: ['awareness','consideration','conversion'],
+  tipo_segmentacao: [
+    'comportamento','contextual','custom_audience','demografico',
+    'interesse','lookalike','regiao','remarketing'
+  ]
+};
+
+// ── Estado ────────────────────────────────────────────────────
+var step       = 1;
+var STEPS      = 7;
+var numLinks   = 1;
+var vals       = [{}];
+var validators = DEMO_VALIDATORS;
+// Guarda o ultimo resultado gerado para poder redesenhar a tela ao trocar de idioma.
+var ULTIMO_RESULTADO = null;
+
+var STEP_FIELDS = {
+  1: [],
+  2: ['equipe','url_destino'],
+  3: ['campanha','regional','produto','mercado'],
+  4: ['veiculo','canal','media','tipo_compra'],
+  5: ['tipo_criativo','dimensao_peca','assunto_criativo'],
+  6: ['tipo_acao','etapa_funil','tipo_segmentacao'],
+  7: []
+};
+
+var STEP_COLLECT = {
+  1: [],
+  2: ['equipe','url_destino'],
+  3: ['campanha','regional','produto','mercado'],
+  4: ['veiculo','canal','media','tipo_compra'],
+  5: ['tipo_criativo','dimensao_peca','assunto_criativo'],
+  6: ['tipo_acao','etapa_funil','tipo_segmentacao','nome_segmentacao'],
+  7: []
+};
+
+var OPTIONAL_FIELDS = ['nome_segmentacao'];
+
+var DROPDOWN_FIELDS = [
+  'equipe','campanha','regional','produto','mercado',
+  'veiculo','canal','media','tipo_compra',
+  'tipo_criativo','dimensao_peca',
+  'tipo_acao','etapa_funil','tipo_segmentacao'
+];
+
+// Todos os campos que possuem rotulo (lbl_*), ajuda (help_*) e, quando for
+// o caso, dica (hint_*) e placeholder (ph_*) no dicionario TEXTOS.
+var ALL_FIELDS = [
+  'equipe','url_destino','campanha','regional','produto','mercado',
+  'veiculo','canal','media','tipo_compra',
+  'tipo_criativo','dimensao_peca','assunto_criativo',
+  'tipo_acao','etapa_funil','tipo_segmentacao','nome_segmentacao'
+];
+var HINT_FIELDS = ['url_destino','assunto_criativo','nome_segmentacao'];
+var PH_FIELDS   = ['url_destino','assunto_criativo','nome_segmentacao'];
+
+// Acessores bilingues — leem sempre do idioma corrente.
+function labelOf(key) { return t('lbl_' + key) || key; }
+function helpOf(key)  { return t('help_' + key); }
+function hintOf(key)  { return HINT_FIELDS.indexOf(key) !== -1 ? t('hint_' + key) : ''; }
+function phOf(key)    { return PH_FIELDS.indexOf(key)   !== -1 ? t('ph_' + key)   : ''; }
+function stepMeta(s)  { return [t('stepTitulo' + s), t('stepSub' + s)]; }
+
+// Paleta — 10 variações para os badges dos links
+var LINK_COLORS = [
+  ['#ccf2e0','#056b3f'],  // verde
+  ['#ccd9e8','#16232f'],  // navy
+  ['#e4cced','#4a1e5a'],  // roxo
+  ['#c8e7ea','#1b6b74'],  // teal
+  ['#ccd9e3','#1e3548'],  // slate
+  ['#c2eed8','#056b3f'],  // verde 2
+  ['#c8d4e0','#16232f'],  // navy 2
+  ['#ddc8e7','#4a1e5a'],  // roxo 2
+  ['#c2e2e6','#1b6b74'],  // teal 2
+  ['#c8d4de','#1e3548']   // slate 2
+];
+
+var REVIEW_ORDER = [
+  'equipe','url_destino','campanha','regional','produto','mercado',
+  'veiculo','canal','media','tipo_compra',
+  'tipo_criativo','dimensao_peca','assunto_criativo',
+  'tipo_acao','etapa_funil','tipo_segmentacao','nome_segmentacao'
+];
+
+// ── Helpers ───────────────────────────────────────────────────
+function fid(key, li)  { return key + '-' + li; }
+function fwid(key, li) { return 'f-' + key + '-' + li; }
+function mkDiv(cls)    { var d = document.createElement('div'); d.className = cls; return d; }
+
+// Escapa caracteres especiais de HTML antes de exibir texto digitado pelo usuario
+function escapeHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function linkBadgeStyle(li) {
+  var c = LINK_COLORS[li % LINK_COLORS.length];
+  return 'background:' + c[0] + ';color:' + c[1];
+}
+
+// ── Idioma ────────────────────────────────────────────────────
+// Troca o idioma da aplicacao inteira e redesenha tudo que depende de texto.
+function definirIdioma(idioma) {
+  IDIOMA = idioma;
+  try { localStorage.setItem('demo_idioma', idioma); } catch (e) {}
+  document.documentElement.lang = (idioma === 'pt' ? 'pt-BR' : 'en');
+  marcarBotoesIdioma(idioma);
+  aplicarTextos();
+  reconstruirInterface();
+}
+
+// Os dois cabecalhos (formulario e resultado) tem o mesmo interruptor.
+function marcarBotoesIdioma(idioma) {
+  document.querySelectorAll('.interruptor-idioma button').forEach(function (b) {
+    b.classList.toggle('ativo', b.dataset.lang === idioma);
+  });
+}
+
+// Escreve na tela todos os textos fixos marcados com data-i18n.
+function aplicarTextos() {
+  document.title = t('tituloPagina');
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.getElementById('badge-step1').textContent = t('etapaBadge')(1, STEPS);
+  document.getElementById('qty-info').textContent    = t('qtdInfo')(numLinks);
+}
+
+// Redesenha tudo que foi gerado por JS: etapa corrente, navegacao e resultado.
+function reconstruirInterface() {
+  if (step >= 2 && step <= 6) { collectStep(step); renderStepContent(step); }
+  if (step === 7) buildReview();
+  updateProgress();
+  updateNav();
+  if (ERRO_ATUAL) showErr(ERRO_ATUAL);
+  if (ULTIMO_RESULTADO) showResults(ULTIMO_RESULTADO);
+}
+
+// Primeiro carregamento: usa o salvo; sem escolha, detecta o idioma do navegador.
+function iniciarIdioma() {
+  var idioma = 'pt';
+  try {
+    idioma = localStorage.getItem('demo_idioma') ||
+      ((navigator.language || 'pt').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en');
+  } catch (e) {}
+  IDIOMA = idioma;
+  document.documentElement.lang = (idioma === 'pt' ? 'pt-BR' : 'en');
+  marcarBotoesIdioma(idioma);
+}
+
+// ── Init ──────────────────────────────────────────────────────
+// DEMO: nao ha chamada ao servidor — os validadores ja estao no arquivo
+(function init() {
+  iniciarIdioma();
+  aplicarTextos();
+  updateProgress();
+  updateNav();
+})();
+
+// ── Quantidade ────────────────────────────────────────────────
+function setNumLinks(n) {
+  numLinks = n;
+  document.querySelectorAll('.qty-btn').forEach(function(b) { b.classList.remove('selected'); });
+  var btn = document.getElementById('qty-' + n);
+  if (btn) btn.classList.add('selected');
+  var info = document.getElementById('qty-info');
+  if (info) info.textContent = t('qtdInfo')(n);
+}
+
+// ── Navegação ─────────────────────────────────────────────────
+function goNext() {
+  if (step === 1) {
+    if (!numLinks || numLinks < 1) { showErr('errQtd'); return; }
+    vals = [];
+    for (var i = 0; i < numLinks; i++) vals.push({});
+  } else {
+    if (!validateStep(step)) return;
+    collectStep(step);
+    if (step === 6) buildReview();
+  }
+  if (step < STEPS) {
+    document.getElementById('step-' + step).classList.remove('active');
+    step++;
+    if (step >= 2 && step <= 6) renderStepContent(step);
+    document.getElementById('step-' + step).classList.add('active');
+    updateProgress(); updateNav(); hideErr();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function goBack() {
+  if (step <= 1) return;
+  if (step >= 2 && step <= 6) collectStep(step);
+  document.getElementById('step-' + step).classList.remove('active');
+  step--;
+  if (step >= 2 && step <= 6) renderStepContent(step);
+  document.getElementById('step-' + step).classList.add('active');
+  updateProgress(); updateNav(); hideErr();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateNav() {
+  document.getElementById('btn-back').style.display = step > 1 ? '' : 'none';
+  var nxt = document.getElementById('btn-next');
+  nxt.style.display   = step < STEPS ? '' : 'none';
+  nxt.textContent     = step === 6 ? t('btnRevisar') : t('btnAvancar');
+  var sub = document.getElementById('btn-submit');
+  sub.style.display   = step === STEPS ? '' : 'none';
+  sub.textContent     = numLinks > 1 ? t('btnGerarN')(numLinks) : t('btnGerar');
+}
+
+function updateProgress() {
+  document.getElementById('prog-fill').style.width = ((step - 1) / (STEPS - 1) * 100) + '%';
+  document.querySelectorAll('.step-lbl').forEach(function(el) {
+    var s = parseInt(el.dataset.s, 10);
+    el.className = 'step-lbl' + (s === step ? ' active' : s < step ? ' done' : '');
+  });
+}
+
+// ── Renderização dinâmica ─────────────────────────────────────
+function renderStepContent(s) {
+  var panel = document.getElementById('step-' + s);
+  var meta  = stepMeta(s);
+  panel.innerHTML =
+    '<div class="step-header">' +
+    '<div class="step-badge">' + t('etapaBadge')(s, STEPS) + '</div>' +
+    '<h2 class="step-title">' + escapeHtml(meta[0]) + '</h2>' +
+    '<p class="step-subtitle">' + escapeHtml(meta[1]) + '</p>' +
+    '</div>';
+
+  for (var li = 0; li < numLinks; li++) {
+    var hist = buildHistoryBox(s, li);   // historico do que ja foi preenchido
+    if (numLinks > 1) {
+      var lc   = mkDiv('link-card');
+      var lhdr = mkDiv('link-card-header');
+      lhdr.innerHTML = '<span class="link-badge" style="' + linkBadgeStyle(li) + '">' + t('rotuloLink')(li + 1) + '</span>';
+      var lbody = mkDiv('link-card-body');
+      if (hist) lbody.appendChild(hist);
+      buildStepFields(s, li, lbody);
+      lc.appendChild(lhdr); lc.appendChild(lbody);
+      // Botao para replicar a etapa inteira do Link 1 para os demais links
+      if (li === 0) {
+        var rs = mkDiv('rep-step');
+        var rb = document.createElement('button');
+        rb.type = 'button'; rb.className = 'btn-rep-step';
+        rb.textContent = t('repEtapa');
+        (function(sCopy, rbCopy) {
+          rbCopy.addEventListener('click', function() { replicateStep(sCopy, rbCopy); });
+        })(s, rb);
+        rs.appendChild(rb);
+        lc.appendChild(rs);
+      }
+      panel.appendChild(lc);
+    } else {
+      var card = mkDiv('card');
+      if (hist) card.appendChild(hist);
+      buildStepFields(s, li, card);
+      panel.appendChild(card);
+    }
+  }
+}
+
+function buildStepFields(s, li, ct) {
+  if (s === 2) {
+    ct.appendChild(buildField('equipe',      li));
+    ct.appendChild(buildField('url_destino', li));
+  } else if (s === 3) {
+    var g = mkDiv('g2');
+    ['campanha','regional','produto','mercado'].forEach(function(k) { g.appendChild(buildField(k, li)); });
+    ct.appendChild(g);
+    ct.appendChild(buildPreviewBox('prev-campaign-' + li, t('prevCampanha')));
+  } else if (s === 4) {
+    var g = mkDiv('g2');
+    ['veiculo','canal','media','tipo_compra'].forEach(function(k) { g.appendChild(buildField(k, li)); });
+    ct.appendChild(g);
+  } else if (s === 5) {
+    var g = mkDiv('g2');
+    g.appendChild(buildField('tipo_criativo', li));
+    g.appendChild(buildField('dimensao_peca', li));
+    ct.appendChild(g);
+    ct.appendChild(buildField('assunto_criativo', li));
+    ct.appendChild(buildPreviewBox('prev-creative-' + li, t('prevCriativo')));
+  } else if (s === 6) {
+    ct.appendChild(buildField('tipo_acao', li));
+    var g = mkDiv('g2');
+    g.appendChild(buildField('etapa_funil', li));
+    g.appendChild(buildField('tipo_segmentacao', li));
+    ct.appendChild(g);
+    ct.appendChild(buildField('nome_segmentacao', li));
+    ct.appendChild(buildPreviewBox('prev-adgroup-' + li, t('prevAdgroup')));
+  }
+}
+
+// Monta a caixa "Ja preenchido neste link" com o resumo das etapas
+// anteriores (a UTM parcial que ja foi montada), para dar visao durante o preenchimento
+function buildHistoryBox(s, li) {
+  var v = vals[li] || {};
+  var rows = [];
+  if (s > 2) {
+    var url = v.url_destino || '';
+    if (url.length > 48) url = url.slice(0, 48) + '…';
+    var p2 = [v.equipe, url].filter(Boolean).join('  ·  ');
+    if (p2) rows.push([t('stepTitulo2'), p2]);
+  }
+  if (s > 3) {
+    var p3 = [v.campanha, v.regional, v.produto, v.mercado].filter(Boolean).join('_');
+    if (p3) rows.push([t('stepTitulo3'), p3]);
+  }
+  if (s > 4) {
+    var p4 = [v.veiculo, v.canal, v.media, v.tipo_compra].filter(Boolean).join('_');
+    if (p4) rows.push([t('stepTitulo4'), p4]);
+  }
+  if (s > 5) {
+    var p5 = [v.tipo_criativo, v.dimensao_peca, v.assunto_criativo].filter(Boolean).join('_');
+    if (p5) rows.push([t('stepTitulo5'), p5]);
+  }
+  if (!rows.length) return null;
+
+  var d = mkDiv('hist');
+  var html = '<div class="hist-title">' + t('histTitulo') + '</div>';
+  rows.forEach(function(r) {
+    html += '<div class="hist-row"><span class="hist-lbl">' + escapeHtml(r[0]) + '</span>' +
+      '<span class="hist-val">' + escapeHtml(r[1]) + '</span></div>';
+  });
+  d.innerHTML = html;
+  return d;
+}
+
+function buildField(key, li) {
+  var isOpt = OPTIONAL_FIELDS.indexOf(key) !== -1;
+  var wrap  = mkDiv('field'); wrap.id = fwid(key, li);
+
+  var lbl = document.createElement('label');
+  lbl.setAttribute('for', fid(key, li));
+  lbl.textContent = labelOf(key);
+  if (!isOpt) {
+    var req = document.createElement('span'); req.className = 'req'; req.textContent = ' *'; lbl.appendChild(req);
+  }
+
+  // Icone "?" que abre/fecha a caixinha de ajuda do campo
+  if (helpOf(key)) {
+    var hb = document.createElement('button');
+    hb.type = 'button'; hb.className = 'help-ic'; hb.textContent = '?';
+    hb.setAttribute('aria-label', t('ajudaAria')(labelOf(key)));
+    (function(keyCopy, liCopy, hbCopy) {
+      hbCopy.addEventListener('click', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        var box = document.getElementById('help-' + fid(keyCopy, liCopy));
+        if (box) {
+          box.classList.toggle('show');
+          hbCopy.classList.toggle('open', box.classList.contains('show'));
+        }
+      });
+    })(key, li, hb);
+    lbl.appendChild(hb);
+  }
+
+  var hint = hintOf(key);
+  if (hint) {
+    var h = document.createElement('span'); h.className = 'hint'; h.textContent = hint; lbl.appendChild(h);
+  }
+  wrap.appendChild(lbl);
+
+  // Caixinha de ajuda (fica oculta ate clicar no "?")
+  if (helpOf(key)) {
+    var helpBox = mkDiv('help-box');
+    helpBox.id = 'help-' + fid(key, li);
+    helpBox.textContent = helpOf(key);
+    wrap.appendChild(helpBox);
+  }
+
+  var inp;
+  if (DROPDOWN_FIELDS.indexOf(key) !== -1) {
+    inp = document.createElement('select'); inp.id = fid(key, li);
+    var ph = document.createElement('option'); ph.value = ''; ph.textContent = t('selecione'); inp.appendChild(ph);
+    (validators[key] || []).forEach(function(v) {
+      var o = document.createElement('option'); o.value = v; o.textContent = v; inp.appendChild(o);
+    });
+    (function(liCopy) {
+      inp.addEventListener('change', function() { updatePreviews(liCopy); });
+    })(li);
+  } else {
+    inp = document.createElement('input');
+    inp.type = 'text';
+    inp.id   = fid(key, li);
+    var ph2 = phOf(key);
+    if (ph2) inp.placeholder = ph2;
+    if (key === 'assunto_criativo') {
+      (function(liCopy) {
+        inp.addEventListener('input', function() { updatePreviews(liCopy); });
+        inp.addEventListener('blur',  function() { normalizeAssunto(liCopy); });
+      })(li);
+    }
+  }
+  if (vals[li] && vals[li][key] !== undefined) inp.value = vals[li][key];
+  wrap.appendChild(inp);
+
+  // Botao "Replicar para todos" — so no Link 1 e so quando ha 2+ links
+  if (numLinks > 1 && li === 0) {
+    var rb = document.createElement('button');
+    rb.type = 'button'; rb.className = 'rep-btn';
+    rb.textContent = t('repTodos');
+    (function(keyCopy, rbCopy) {
+      rbCopy.addEventListener('click', function(e) {
+        e.preventDefault();
+        replicateField(keyCopy, rbCopy);
+      });
+    })(key, rb);
+    wrap.appendChild(rb);
+  }
+
+  var err = document.createElement('div'); err.className = 'field-err';
+  err.textContent = t('errObrigatorio');
+  wrap.appendChild(err);
+  return wrap;
+}
+
+function buildPreviewBox(id, label) {
+  var d = mkDiv('preview-box');
+  d.innerHTML = '<div class="plabel">' + escapeHtml(label) + '</div>' +
+    '<div class="pvalue empty" id="' + id + '">' + escapeHtml(t('prevVazio')) + '</div>';
+  return d;
+}
+
+// ── Replicação ────────────────────────────────────────────────
+// Copia o valor de UM campo do Link 1 para o mesmo campo de todos os outros links
+function replicateField(key, btn) {
+  var src = document.getElementById(fid(key, 0));
+  if (!src) return;
+  var v = src.value;
+  for (var li = 1; li < numLinks; li++) {
+    var el = document.getElementById(fid(key, li));
+    if (el) {
+      el.value = v;
+      var fw = document.getElementById(fwid(key, li));
+      if (fw && v) fw.classList.remove('invalid');
+      updatePreviews(li);
+    }
+  }
+  flashRep(btn, t('repTodosOk'));
+}
+
+// Copia TODOS os campos da etapa atual do Link 1 para todos os outros links
+function replicateStep(s, btn) {
+  var keys = STEP_COLLECT[s] || [];
+  for (var li = 1; li < numLinks; li++) {
+    keys.forEach(function(key) {
+      var src = document.getElementById(fid(key, 0));
+      var dst = document.getElementById(fid(key, li));
+      if (src && dst) {
+        dst.value = src.value;
+        var fw = document.getElementById(fwid(key, li));
+        if (fw && src.value) fw.classList.remove('invalid');
+      }
+    });
+    updatePreviews(li);
+  }
+  flashRep(btn, t('repEtapaOk'));
+}
+
+// Feedback visual temporario nos botoes de replicar ("✓ Replicado!")
+function flashRep(btn, txt) {
+  if (!btn.dataset.orig) btn.dataset.orig = btn.textContent;
+  btn.textContent = txt;
+  btn.classList.add('done');
+  setTimeout(function() {
+    btn.textContent = btn.dataset.orig;
+    btn.classList.remove('done');
+  }, 2000);
+}
+
+// ── Previews ──────────────────────────────────────────────────
+function gv(key, li) {
+  var el = document.getElementById(fid(key, li));
+  return el ? (el.value || '').trim() : '';
+}
+
+function setPreview(id, text) {
+  var el = document.getElementById(id); if (!el) return;
+  el.textContent = text || t('prevVazio');
+  el.className   = text ? 'pvalue' : 'pvalue empty';
+}
+
+function updatePreviews(li) {
+  var c3 = [gv('campanha',li), gv('regional',li), gv('produto',li), gv('mercado',li)];
+  setPreview('prev-campaign-' + li, c3.every(Boolean) ? c3.join('_') : '');
+  var tc = gv('tipo_criativo',li), dp = gv('dimensao_peca',li), ac = gv('assunto_criativo',li);
+  setPreview('prev-creative-' + li, (tc && dp && ac) ? tc+'_'+dp+'_'+ac+'_ABC####' : '');
+  var c6 = [gv('tipo_acao',li), gv('etapa_funil',li), gv('tipo_segmentacao',li)];
+  setPreview('prev-adgroup-' + li, c6.every(Boolean) ? c6.join('_') : '');
+}
+
+// ── Normalização ──────────────────────────────────────────────
+function normalizeStr(str) {
+  return str.normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+}
+
+function normalizeAssunto(li) {
+  var el = document.getElementById(fid('assunto_criativo', li));
+  if (el) { el.value = normalizeStr(el.value); updatePreviews(li); }
+}
+
+// ── Validação ─────────────────────────────────────────────────
+function validateStep(s) {
+  var ok = true;
+  for (var li = 0; li < numLinks; li++) {
+    (STEP_FIELDS[s] || []).forEach(function(name) {
+      var el = document.getElementById(fid(name, li));
+      var fw = document.getElementById(fwid(name, li));
+      if (!el || !fw) return;
+      var v   = (el.value || '').trim();
+      var bad = !v;   // DEMO: URL nao precisa comecar com https://
+      fw.classList.toggle('invalid', bad);
+      if (bad) ok = false;
+    });
+  }
+  return ok;
+}
+
+// ── Coleta ────────────────────────────────────────────────────
+function collectStep(s) {
+  for (var li = 0; li < numLinks; li++) {
+    if (!vals[li]) vals[li] = {};
+    (STEP_COLLECT[s] || []).forEach(function(name) {
+      var el = document.getElementById(fid(name, li));
+      if (el) vals[li][name] = (el.value || '').trim();
+    });
+  }
+}
+
+function collectAll() { for (var s = 2; s <= 6; s++) collectStep(s); }
+
+// ── Revisão ───────────────────────────────────────────────────
+function buildReview() {
+  collectAll();
+  var panel = document.getElementById('step-7');
+  panel.innerHTML =
+    '<div class="step-header">' +
+    '<div class="step-badge">' + t('etapaBadge')(STEPS, STEPS) + '</div>' +
+    '<h2 class="step-title">' + escapeHtml(t('stepTitulo7')) + '</h2>' +
+    '<p class="step-subtitle">' + escapeHtml(t('stepSub7')) + '</p>' +
+    '</div>';
+
+  for (var li = 0; li < numLinks; li++) {
+    if (numLinks > 1) {
+      var lc   = mkDiv('link-card');
+      var lhdr = mkDiv('link-card-header');
+      lhdr.innerHTML = '<span class="link-badge" style="' + linkBadgeStyle(li) + '">' + t('rotuloLink')(li + 1) + '</span>';
+      var lbody = mkDiv('link-card-body');
+      lbody.appendChild(buildReviewTable(li));
+      lc.appendChild(lhdr); lc.appendChild(lbody);
+      panel.appendChild(lc);
+    } else {
+      var card = mkDiv('card');
+      card.appendChild(buildReviewTable(li));
+      panel.appendChild(card);
+    }
+  }
+}
+
+function buildReviewTable(li) {
+  var tbl = document.createElement('table'); tbl.className = 'rtable';
+  REVIEW_ORDER.forEach(function(key) {
+    var val = vals[li] ? (vals[li][key] || '') : '';
+    if (!val && OPTIONAL_FIELDS.indexOf(key) !== -1) return;
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + escapeHtml(labelOf(key)) + '</td>' +
+      '<td>' + (val ? escapeHtml(val) : '<span class="empty-val">—</span>') + '</td>';
+    tbl.appendChild(tr);
+  });
+  return tbl;
+}
+
+// ── Geração local (DEMO) ──────────────────────────────────────
+// Gera a chave ABC#### sequencial simulada, guardada no navegador (localStorage).
+// Na versao real esse numero vem da planilha de taxonomia.
+function nextKey() {
+  var n = 1;
+  try {
+    n = parseInt(localStorage.getItem('utm_demo_seq') || '0', 10) + 1;
+    localStorage.setItem('utm_demo_seq', String(n));
+  } catch(e) { n = Math.floor(Math.random() * 9000) + 1000; }
+  return 'ABC' + ('0000' + n).slice(-4);
+}
+
+// Monta localmente o resultado de UM link (o que na versao real
+// e calculado pelas formulas da planilha de taxonomia)
+function generateLocalLink(d) {
+  var key = nextKey();
+  // DEMO: se a pessoa nao digitou https://, completamos automaticamente
+  var urlBase = d.url_destino;
+  if (!/^https?:\/\//i.test(urlBase)) urlBase = 'https://' + urlBase;
+  var campaignName = [d.campanha, d.regional, d.produto, d.mercado].join('_');
+  var adgroup      = [d.tipo_acao, d.etapa_funil, d.tipo_segmentacao].join('_');
+  var adCreative   = [d.tipo_criativo, d.dimensao_peca, d.assunto_criativo, key].join('_');
+  var utmSource    = [d.veiculo, d.canal].join('_');
+  var utmMedium    = [d.media, d.tipo_compra].join('_');
+
+  var sep = urlBase.indexOf('?') === -1 ? '?' : '&';
+  var urlFinal = urlBase + sep +
+    'utm_source='   + encodeURIComponent(utmSource)    +
+    '&utm_medium='  + encodeURIComponent(utmMedium)    +
+    '&utm_campaign='+ encodeURIComponent(campaignName) +
+    '&utm_content=' + encodeURIComponent(adCreative);
+
+  return {
+    ok: true,
+    link: {
+      chave_unica:   key,
+      campaign_name: campaignName,
+      adgroup_adset: adgroup,
+      ad_creative:   adCreative,
+      url_final:     urlFinal
+    }
+  };
+}
+
+// ── Submit (DEMO: tudo local, nada e enviado) ─────────────────
+function handleSubmit() {
+  collectAll();
+  var btn = document.getElementById('btn-submit');
+  btn.disabled    = true;
+  btn.textContent = numLinks > 1 ? t('gerandoN')(numLinks) : t('gerando');
+  hideErr();
+
+  // Pequeno delay so para simular o processamento da versao real
+  setTimeout(function() {
+    var results = vals.map(function(d) { return generateLocalLink(d); });
+    btn.disabled = false;
+    btn.textContent = numLinks > 1 ? t('btnGerarN')(numLinks) : t('btnGerar');
+    showResults(results);
+  }, 600);
+}
+
+// ── Resultado ─────────────────────────────────────────────────
+function showResults(results) {
+  ULTIMO_RESULTADO = results;   // guardado para redesenhar ao trocar de idioma
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('visible');
+  var ok = results.filter(function(r) { return r.ok; }).length;
+  document.getElementById('result-title').textContent = results.length > 1
+    ? t('resTituloN')(ok, results.length)
+    : t('resTitulo');
+
+  var container = document.getElementById('result-container');
+  container.innerHTML = '';
+
+  results.forEach(function(res, li) {
+    var card = mkDiv('result-card');
+    var hdr  = mkDiv('rc-header');
+    if (results.length > 1) {
+      hdr.innerHTML =
+        '<span class="link-badge" style="' + linkBadgeStyle(li) + '">' + t('rotuloLink')(li+1) + '</span>' +
+        '<span class="rc-key" style="margin-left:10px">' + ((res.link && res.link.chave_unica) || 'ABC') + '</span>';
+    } else {
+      hdr.innerHTML = '<span class="rc-key">' + ((res.link && res.link.chave_unica) || 'ABC') + '</span>' +
+        '<span>' + escapeHtml(t('resLinkGerado')) + '</span>';
+    }
+    card.appendChild(hdr);
+
+    var fields = mkDiv('rc-fields');
+    [
+      { label:t('rcChave'),    key:'chave_unica'   },
+      { label:t('rcCampaign'), key:'campaign_name' },
+      { label:t('rcAdgroup'),  key:'adgroup_adset' },
+      { label:t('rcCreative'), key:'ad_creative'   },
+      { label:t('rcUrl'),      key:'url_final'     }
+    ].forEach(function(f) {
+      var val  = (res.link && res.link[f.key]) || '—';
+      var eid  = 'rc-' + f.key + '-' + li;
+      var fd   = mkDiv('rc-field');
+      fd.innerHTML =
+        '<div class="rc-label">' + escapeHtml(f.label) + '</div>' +
+        '<div class="url-row">' +
+        '<div class="rc-value" id="' + eid + '">' + escapeHtml(val) + '</div>' +
+        '<button class="btn-copy" onclick="copyField(this,\'' + eid + '\')">' + escapeHtml(t('btnCopiar')) + '</button>' +
+        '</div>';
+      fields.appendChild(fd);
+    });
+
+    // ── UTM breakdown ─────────────────────────────────────────
+    var urlFinal = (res.link && res.link.url_final) || '';
+    if (urlFinal && urlFinal !== '—') {
+      var sepDiv = mkDiv('rc-utm-sep');
+      sepDiv.innerHTML = '<span>' + escapeHtml(t('rcUtmSep')) + '</span>';
+      fields.appendChild(sepDiv);
+
+      ['utm_campaign', 'utm_content', 'utm_source', 'utm_medium'].forEach(function(param) {
+        var utmVal = '—';
+        try {
+          var urlObj = new URL(urlFinal);
+          var v = urlObj.searchParams.get(param);
+          if (v !== null) utmVal = decodeURIComponent(v);
+        } catch(e) {
+          var m = urlFinal.match(new RegExp('[?&]' + param + '=([^&]*)'));
+          if (m) utmVal = decodeURIComponent(m[1].replace(/\+/g, ' '));
+        }
+        var eid = 'rc-utm-' + param + '-' + li;
+        var fd  = mkDiv('rc-field');
+        fd.innerHTML =
+          '<div class="rc-label">' + param + '</div>' +
+          '<div class="url-row">' +
+          '<div class="rc-value rc-value--mono" id="' + eid + '">' + escapeHtml(utmVal) + '</div>' +
+          '<button class="btn-copy" onclick="copyField(this,\'' + eid + '\')">' + escapeHtml(t('btnCopiar')) + '</button>' +
+          '</div>';
+        fields.appendChild(fd);
+      });
+    }
+    // ──────────────────────────────────────────────────────────
+
+    card.appendChild(fields);
+    container.appendChild(card);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Copiar ────────────────────────────────────────────────────
+function copyField(btn, elemId) {
+  var el = document.getElementById(elemId); if (!el) return;
+  var text = el.textContent || '';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { flashCopy(btn); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;left:-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta); flashCopy(btn);
+  }
+}
+
+function flashCopy(btn) {
+  btn.textContent = t('btnCopiado'); btn.classList.add('copied');
+  setTimeout(function() { btn.textContent = t('btnCopiar'); btn.classList.remove('copied'); }, 2000);
+}
+
+// ── Reset ─────────────────────────────────────────────────────
+function resetApp() {
+  step = 1; numLinks = 1; vals = [{}]; ULTIMO_RESULTADO = null;
+  document.querySelectorAll('.qty-btn').forEach(function(b) { b.classList.remove('selected'); });
+  document.getElementById('qty-1').classList.add('selected');
+  document.getElementById('qty-info').textContent = t('qtdInfo')(1);
+  document.querySelectorAll('.step').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('step-1').classList.add('active');
+  document.getElementById('result-screen').classList.remove('visible');
+  document.getElementById('app').classList.remove('hidden');
+  updateProgress(); updateNav(); hideErr();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Erros ─────────────────────────────────────────────────────
+// Guarda a CHAVE do erro (nao o texto) para que ele acompanhe a troca de idioma.
+var ERRO_ATUAL = null;
+
+function showErr(chave) {
+  ERRO_ATUAL = chave;
+  var b = document.getElementById('err-banner');
+  var m = document.getElementById('err-msg');
+  if (b && m) { m.textContent = t(chave); b.classList.add('show'); }
+}
+
+function hideErr() {
+  ERRO_ATUAL = null;
+  var b = document.getElementById('err-banner');
+  if (b) b.classList.remove('show');
+}
+</script>
+</body>
+</html>

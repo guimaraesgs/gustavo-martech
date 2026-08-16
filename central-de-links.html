@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central de Links · Empresa ABC (Demo)</title>
+<!-- O HTML estático fica em PT (padrão); as metas abaixo trazem a versão bilíngue
+     para buscadores e prévias de link, já que o idioma só troca no navegador. -->
+<meta name="description" content="Central de Links da Empresa ABC — versão demonstrativa com dados fictícios. Corporate Link Hub demo (PT/EN) with fictional data only.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Central de Links · Link Hub — Empresa ABC (Demo)">
+<meta property="og:description" content="Demonstração bilíngue PT/EN de uma central de links corporativa: busca, filtros e menu hierárquico gerado a partir dos dados. Bilingual PT/EN demo of a corporate link hub: search, filters and a data-driven hierarchical menu.">
+<!-- Favicon inline (data URI): o mesmo quadrado da logo-marca, letra "A". -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='%2316233F'/%3E%3Ctext%20x='16'%20y='23'%20text-anchor='middle'%20font-family='Segoe%20UI,Helvetica,Arial,sans-serif'%20font-size='20'%20font-weight='800'%20fill='%236C8CFF'%3EA%3C/text%3E%3C/svg%3E">
+<style>
+/* =====================================================================
+   CENTRAL DE LINKS CORPORATIVA — VERSÃO DEMONSTRATIVA (Empresa ABC)
+   Arquivo 100% autossuficiente: HTML + CSS + JS + dados fictícios.
+   Sem back-end, sem CDN, sem dados reais.
+   Recursos: tema claro/escuro, idioma PT/EN, busca, filtros,
+   navegação hierárquica (menu > submenus) e cadastro simulado.
+   ===================================================================== */
+:root{
+  --acento:#2563EB; --acento-forte:#1D4ED8; --acento-suave:rgba(37,99,235,.10);
+  --fundo:#F5F7FA; --card:#FFFFFF; --card-2:#EEF1F5; --linha:#E1E6EC;
+  --ink:#1B2430; --muted:#5B6B7C; --muted-2:#8E9BAA;
+  --hero-a:#16233F; --hero-b:#0C1526; --hero-texto:#FFFFFF; --hero-sub:#A9B7CC;
+  --negativo:#C65D73; --ok:#2E9E6B;
+  --sombra:0 1px 2px rgba(17,24,39,.05),0 4px 14px rgba(17,24,39,.07);
+  --sombra-alta:0 8px 30px rgba(17,24,39,.18);
+  --raio:12px; --altura-header:62px;
+}
+[data-theme="dark"]{
+  --acento:#6C8CFF; --acento-forte:#8FA6FF; --acento-suave:rgba(108,140,255,.14);
+  --fundo:#0F1524; --card:#171F33; --card-2:#1E2840; --linha:#28324B;
+  --ink:#E8ECF4; --muted:#9AA7BC; --muted-2:#6E7B92;
+  --hero-a:#131C33; --hero-b:#0A0F1C; --hero-texto:#FFFFFF; --hero-sub:#93A1B8;
+  --sombra:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.35);
+  --sombra-alta:0 8px 30px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--ink);background:var(--fundo);font-size:15px;line-height:1.55;
+  transition:background .2s,color .2s}
+h1,h2,h3{letter-spacing:-0.01em;line-height:1.12}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:inherit;color:var(--ink)}
+mark{background:var(--acento-suave);color:var(--acento-forte);border-radius:3px;padding:0 1px}
+:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+.oculto{display:none !important}
+
+.faixa-demo{position:fixed;top:0;left:0;right:0;z-index:120;background:var(--acento);color:#fff;
+  text-align:center;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px}
+
+/* ---------- Cabeçalho ---------- */
+header{position:fixed;top:22px;left:0;right:0;height:var(--altura-header);z-index:100;
+  background:var(--card);border-bottom:1px solid var(--linha);display:flex;align-items:center;gap:16px;padding:0 18px;
+  box-shadow:var(--sombra)}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer;background:none;border:none;color:var(--ink)}
+.logo-marca{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--acento),var(--acento-forte));
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff}
+.logo-texto{font-size:14.5px;line-height:1.15;text-align:left;font-weight:400;white-space:nowrap}
+.logo-texto b{font-weight:800}
+.logo-sub{display:block;font-size:10.5px;letter-spacing:.05em;color:var(--muted-2);text-transform:uppercase}
+nav#menuPrincipal{display:flex;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+nav#menuPrincipal::-webkit-scrollbar{display:none}
+.menu-item{background:none;border:none;color:var(--muted);font-weight:600;font-size:12px;
+  text-transform:uppercase;letter-spacing:.03em;padding:8px 10px;border-radius:8px;white-space:nowrap;transition:all .15s}
+.menu-item:hover{color:var(--ink);background:var(--card-2)}
+.menu-item.ativo{color:var(--acento-forte);background:var(--acento-suave)}
+.menu-item.novo-item{animation:pulsar 1.2s ease 2}
+@keyframes pulsar{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px var(--acento-suave)}}
+.header-acoes{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto}
+.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;font-size:12.5px;
+  text-transform:uppercase;letter-spacing:.04em;transition:all .15s;display:inline-flex;align-items:center;gap:8px}
+.btn-acento{background:var(--acento);color:#fff}
+.btn-acento:hover{background:var(--acento-forte);box-shadow:0 4px 14px var(--acento-suave)}
+.btn-acento:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.btn-fantasma{background:transparent;color:var(--ink);border:1px solid var(--linha)}
+.btn-fantasma:hover{background:var(--card-2)}
+.btn-icone{background:transparent;border:1px solid var(--linha);border-radius:10px;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0}
+.btn-icone:hover{color:var(--ink);background:var(--card-2)}
+/* Interruptor de idioma */
+.interruptor-idioma{display:flex;background:var(--card-2);border:1px solid var(--linha);border-radius:10px;padding:2px;flex-shrink:0}
+.interruptor-idioma button{background:none;border:none;border-radius:8px;padding:6px 10px;font-size:11.5px;
+  font-weight:800;letter-spacing:.06em;color:var(--muted-2);transition:all .15s}
+.interruptor-idioma button.ativo{background:var(--card);color:var(--acento-forte);box-shadow:var(--sombra)}
+#btnMenuMobile{display:none;background:none;border:none;color:var(--ink);padding:6px}
+
+/* ---------- Hero ---------- */
+.hero{margin-top:calc(var(--altura-header) + 22px);padding:56px 20px 78px;text-align:center;
+  color:var(--hero-texto);background:radial-gradient(130% 120% at 25% 10%,var(--hero-a),var(--hero-b) 70%)}
+.hero h1{font-size:clamp(1.6rem,4vw,2.7rem);margin-bottom:12px;font-weight:300;text-transform:uppercase;letter-spacing:-0.02em}
+.hero h1 b{font-weight:800;color:var(--acento)}
+[data-theme="dark"] .hero h1 b{color:var(--acento-forte)}
+.hero p{color:var(--hero-sub);max-width:600px;margin:0 auto 8px;font-size:15px}
+.dica-demo{font-size:12.5px;color:var(--hero-sub);margin:0 auto 26px}
+.dica-demo code{background:rgba(255,255,255,.1);border-radius:5px;padding:1px 7px;font-size:12px;color:#fff}
+.caixa-busca{position:relative;max-width:660px;margin:0 auto}
+.campo-busca{display:flex;align-items:center;background:var(--card);border-radius:14px;padding:4px 6px 4px 16px;
+  box-shadow:0 10px 40px rgba(0,0,0,.35),0 0 0 1px var(--acento-suave)}
+.campo-busca svg{flex-shrink:0;color:var(--muted)}
+.campo-busca input{flex:1;border:none;outline:none;padding:13px 12px;font-size:16px;background:transparent;min-width:0}
+.campo-busca input::placeholder{color:var(--muted-2)}
+#btnLimparBusca{background:none;border:none;color:var(--muted-2);padding:8px;display:none}
+#sugestoes{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--card);border-radius:14px;
+  border:1px solid var(--linha);box-shadow:var(--sombra-alta);overflow:hidden;text-align:left;z-index:60;max-height:62vh;overflow-y:auto}
+.sugestao{display:flex;align-items:center;gap:12px;width:100%;background:none;border:none;text-align:left;
+  padding:11px 15px;border-bottom:1px solid var(--card-2);transition:background .1s;color:var(--ink)}
+.sugestao:last-child{border-bottom:none}
+.sugestao:hover,.sugestao.selecionada{background:var(--card-2)}
+.sugestao-info{flex:1;min-width:0}
+.sugestao-nome{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.sugestao-caminho{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.sugestao-ver-todos{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--acento-forte);justify-content:center}
+
+/* ---------- Seções ---------- */
+main{max-width:1180px;margin:0 auto;padding:0 20px 60px}
+.secao{margin-top:42px}
+.secao-titulo{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.secao-titulo h2{font-size:1.12rem;text-transform:uppercase;font-weight:400}
+.secao-titulo h2 b{font-weight:800;color:var(--acento-forte)}
+.secao-titulo .contagem{font-size:12.5px;color:var(--muted)}
+
+.tag{display:inline-flex;align-items:center;font-weight:700;font-size:10px;text-transform:uppercase;
+  letter-spacing:.05em;padding:3px 8px;border-radius:6px;background:var(--card-2);color:var(--muted);border:1px solid var(--linha)}
+.tag.tag-acento{color:var(--acento-forte);background:var(--acento-suave);border-color:transparent}
+.icone-tipo{width:32px;height:32px;border-radius:9px;background:var(--card-2);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* Cards de link */
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:13px}
+.card-link{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:15px;
+  display:flex;flex-direction:column;gap:8px;transition:all .15s;cursor:pointer;text-align:left}
+.card-link:hover{box-shadow:var(--sombra);transform:translateY(-1px);border-color:var(--muted-2)}
+.card-link.recem-criado{animation:pulsar 1.2s ease 2;border-color:var(--acento)}
+.card-link .topo{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card-link h3{font-size:.92rem;font-weight:600;line-height:1.35}
+.card-link .obs{font-size:12.5px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-link .caminho{font-size:11.5px;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-link .meta{display:flex;gap:7px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:auto}
+.card-link .meta span{background:var(--card-2);border-radius:6px;padding:2px 8px}
+.btn-abrir{background:none;border:1px solid var(--linha);border-radius:8px;width:30px;height:30px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;color:var(--acento-forte);transition:all .15s}
+.btn-abrir:hover{background:var(--acento);color:#fff;border-color:var(--acento)}
+
+/* ---------- Filtros ---------- */
+.barra-filtros{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);
+  padding:13px 15px;display:flex;gap:10px;align-items:end;flex-wrap:wrap;box-shadow:var(--sombra)}
+.filtro{display:flex;flex-direction:column;gap:4px;min-width:145px;flex:1}
+.filtro label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.filtro select{border:1px solid var(--linha);border-radius:8px;padding:9px 10px;background:var(--card);width:100%}
+#resumoFiltros{font-size:12.5px;color:var(--muted);width:100%}
+
+/* ---------- Drill down ---------- */
+.migalhas{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px;font-size:13px}
+.migalhas button{background:none;border:none;color:var(--acento-forte);font-weight:600;font-size:13px;padding:2px 4px;border-radius:4px}
+.migalhas button:hover{text-decoration:underline}
+.migalhas .atual{color:var(--ink);font-weight:700}
+.migalhas .sep{color:var(--muted-2)}
+.grade-grupos{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:13px}
+.card-grupo{background:var(--card);border:1px solid var(--linha);border-left:4px solid var(--acento);
+  border-radius:var(--raio);padding:18px;display:flex;flex-direction:column;gap:8px;cursor:pointer;
+  text-align:left;transition:all .18s;position:relative;color:var(--ink)}
+.card-grupo:hover{box-shadow:var(--sombra);transform:translateY(-2px)}
+.card-grupo h3{font-size:.95rem;font-weight:800;text-transform:uppercase}
+.card-grupo .qtd{font-size:12px;color:var(--muted)}
+.card-grupo .descr{font-size:12.5px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-grupo .seta{position:absolute;top:16px;right:14px;color:var(--muted-2);transition:transform .18s}
+.card-grupo:hover .seta{transform:translateX(3px);color:var(--acento)}
+.card-grupo.compacto{padding:13px 15px;flex-direction:row;align-items:center;gap:12px}
+#btnVoltarNivel{margin-bottom:13px}
+.subtitulo-nivel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:18px 0 10px}
+
+/* ---------- Modais ---------- */
+.fundo-modal{position:fixed;inset:0;background:rgba(8,12,22,.55);z-index:200;display:flex;
+  align-items:center;justify-content:center;padding:20px;animation:aparecer .15s ease}
+.modal{background:var(--card);border:1px solid var(--linha);border-radius:16px;box-shadow:var(--sombra-alta);
+  width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:subir .18s ease}
+.modal.largo{max-width:920px}
+@keyframes aparecer{from{opacity:0}to{opacity:1}}
+@keyframes subir{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.modal-cabecalho{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:20px 22px 0}
+.modal-cabecalho h2{font-size:1.02rem;font-weight:400;text-transform:uppercase}
+.modal-cabecalho h2 b{font-weight:800;color:var(--acento-forte)}
+.btn-fechar{background:none;border:none;color:var(--muted);padding:6px;border-radius:8px;flex-shrink:0}
+.btn-fechar:hover{background:var(--card-2);color:var(--ink)}
+.modal-corpo{padding:16px 22px 22px}
+.detalhe-linha{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--card-2);font-size:13.5px}
+.detalhe-linha:last-of-type{border-bottom:none}
+.detalhe-linha .rotulo{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);width:104px;flex-shrink:0;padding-top:2px}
+.detalhe-linha .valor{word-break:break-word}
+.modal-acoes{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.campo-form{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.campo-form label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.campo-form label .obrig{color:var(--negativo)}
+.campo-form input,.campo-form textarea{border:1px solid var(--linha);border-radius:9px;padding:10px 12px;width:100%;background:var(--card)}
+.campo-form input:focus,.campo-form textarea:focus{border-color:var(--acento);outline:none;box-shadow:0 0 0 3px var(--acento-suave)}
+.campo-form .ajuda{font-size:11.5px;color:var(--muted-2)}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.aviso-form{background:var(--acento-suave);border-radius:9px;padding:10px 12px;font-size:12.5px;color:var(--ink);margin-bottom:14px}
+.aviso-form code{background:var(--card);border:1px solid var(--linha);border-radius:5px;padding:0 6px;font-size:11.5px}
+
+/* ---------- Conteúdo do modal "Como funciona" ---------- */
+.didatico{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:start}
+.didatico .coluna h3{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.didatico .coluna h3 .num{width:20px;height:20px;border-radius:50%;background:var(--acento);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.caixa-rolagem{max-height:340px;overflow-y:auto;border:1px solid var(--linha);border-radius:10px;padding:4px 8px}
+.mini-tabela{width:100%;border-collapse:collapse;font-size:12.5px}
+.mini-tabela th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);
+  padding:6px 6px;border-bottom:1px solid var(--linha);position:sticky;top:0;background:var(--card)}
+.mini-tabela td{padding:6px;border-bottom:1px solid var(--card-2);vertical-align:top;word-break:break-word}
+.mini-tabela td.celula-grupo{color:var(--acento-forte);font-weight:600}
+.mini-tabela tr.linha-nova td{background:var(--acento-suave)}
+.seta-didatica{align-self:center;color:var(--muted-2)}
+.arvore-preview{font-size:13px;line-height:1.85}
+.arvore-preview .no{display:flex;align-items:center;gap:7px}
+.arvore-preview .no .qtd{font-size:10px;color:var(--muted-2);background:var(--card-2);border-radius:5px;padding:0 6px}
+.arvore-preview .n1{font-weight:800;text-transform:uppercase;font-size:11.5px;letter-spacing:.04em;margin-top:8px}
+.arvore-preview .n1:first-child{margin-top:0}
+.arvore-preview .n2{padding-left:16px;font-weight:600}
+.arvore-preview .n3{padding-left:32px;color:var(--muted)}
+.arvore-preview .n2::before,.arvore-preview .n3::before{content:'└ ';color:var(--muted-2)}
+.explica-didatica{grid-column:1/-1;font-size:13px;color:var(--muted);border-top:1px dashed var(--linha);padding-top:14px;line-height:1.65}
+.explica-didatica b{color:var(--acento-forte)}
+.explica-didatica code{background:var(--card-2);border-radius:5px;padding:1px 6px;font-size:12px;color:var(--ink)}
+.passos-didaticos{list-style:none;margin-top:10px;display:grid;gap:6px}
+.passos-didaticos li{display:flex;gap:9px;align-items:flex-start}
+.passos-didaticos li::before{content:'→';color:var(--acento);font-weight:700;flex-shrink:0}
+
+/* ---------- Estados e toast ---------- */
+.estado-vazio{text-align:center;padding:44px 20px;color:var(--muted)}
+.estado-vazio h3{font-size:1rem;color:var(--ink);margin-bottom:6px;text-transform:uppercase;font-weight:700}
+#areaToasts{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{background:var(--ink);color:var(--fundo);border-radius:10px;padding:12px 18px;font-size:13.5px;
+  box-shadow:var(--sombra-alta);animation:subir .2s ease;max-width:92vw;text-align:center}
+.toast.sucesso{border-left:3px solid var(--ok)}
+.toast.erro{border-left:3px solid var(--negativo)}
+footer{border-top:1px solid var(--linha);background:var(--card);padding:20px;text-align:center;font-size:12px;color:var(--muted-2)}
+footer b{text-transform:uppercase;font-weight:700;color:var(--muted)}
+#btnMostrarMais{margin:16px auto 0;display:block}
+
+/* ---------- Responsivo ---------- */
+@media (max-width:1080px){ .rotulo-botao{display:none} }
+@media (max-width:860px){
+  #btnMenuMobile{display:block}
+  nav#menuPrincipal{position:fixed;top:calc(var(--altura-header) + 22px);left:0;right:0;background:var(--card);
+    border-bottom:1px solid var(--linha);flex-direction:column;padding:10px 14px;gap:2px;display:none;box-shadow:var(--sombra-alta)}
+  nav#menuPrincipal.aberto{display:flex}
+  .menu-item{text-align:left;padding:12px}
+  .logo-texto{display:none}
+  .hero{padding:40px 14px 56px}
+  main{padding:0 14px 40px}
+  .form-2col{grid-template-columns:1fr}
+  .didatico{grid-template-columns:1fr}
+  .seta-didatica{transform:rotate(90deg);justify-self:center}
+}
+</style>
+</head>
+<body>
+
+<div class="faixa-demo" data-i18n="faixaDemo"></div>
+
+<!-- ============================= CABEÇALHO ============================= -->
+<header>
+  <button id="btnMenuMobile" aria-label="" onclick="alternarMenuMobile()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <button class="logo" onclick="irParaInicio()">
+    <div class="logo-marca">A</div>
+    <div class="logo-texto"><span data-i18n="logoLinha1"></span> <b data-i18n="logoLinha2"></b><span class="logo-sub">Empresa ABC</span></div>
+  </button>
+  <nav id="menuPrincipal"></nav>
+  <div class="header-acoes">
+    <div class="interruptor-idioma" id="grupoIdioma" role="group" aria-label="">
+      <button id="btnPT" onclick="definirIdioma('pt')">PT</button>
+      <button id="btnEN" onclick="definirIdioma('en')">EN</button>
+    </div>
+    <button class="btn-icone" id="btnTema" onclick="alternarTema()" title="">
+      <svg id="iconeTemaSol" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg id="iconeTemaLua" class="oculto" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+    <button class="btn btn-fantasma" onclick="abrirModalComoFunciona()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.4 2.5c-.6.2-.9.8-.9 1.4v.3M12 17h.01"/></svg>
+      <span class="rotulo-botao" data-i18n="btnComoFunciona"></span>
+    </button>
+    <button class="btn btn-acento" onclick="abrirModalNovoLink()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="rotulo-botao" data-i18n="btnNovoLink"></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================= HERO / BUSCA ============================= -->
+<section class="hero" id="topo">
+  <h1><span data-i18n="heroTitulo1"></span> <b data-i18n="heroTitulo2"></b></h1>
+  <p data-i18n="heroSub"></p>
+  <p class="dica-demo" id="dicaDemo"></p>
+  <div class="caixa-busca">
+    <div class="campo-busca">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="campoBusca" type="text" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sugestoes">
+      <button id="btnLimparBusca" onclick="limparBusca()" aria-label="">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="sugestoes" class="oculto" role="listbox"></div>
+  </div>
+</section>
+
+<main>
+  <!-- ============================= RESULTADOS ============================= -->
+  <section class="secao oculto" id="secaoResultados" aria-live="polite">
+    <div class="secao-titulo">
+      <h2><span data-i18n="secResultados1"></span> <b data-i18n="secResultados2"></b></h2>
+      <span class="contagem" id="contagemResultados"></span>
+      <button class="btn btn-fantasma" style="margin-left:auto" onclick="fecharResultados()" data-i18n="voltarInicio"></button>
+    </div>
+    <div class="grade" id="gradeResultados"></div>
+    <button class="btn btn-fantasma oculto" id="btnMostrarMais" onclick="mostrarMaisResultados()" data-i18n="mostrarMais"></button>
+    <div class="estado-vazio oculto" id="semResultados">
+      <h3 data-i18n="semResultadosTitulo"></h3>
+      <p data-i18n="semResultadosTexto"></p>
+    </div>
+  </section>
+
+  <!-- ============================= ACESSOS RÁPIDOS ============================= -->
+  <section class="secao" id="secaoRapidos">
+    <div class="secao-titulo">
+      <h2><span data-i18n="secRapidos1"></span> <b data-i18n="secRapidos2"></b></h2>
+      <span class="contagem" data-i18n="rapidosNota"></span>
+    </div>
+    <div class="grade" id="gradeRapidos"></div>
+  </section>
+
+  <!-- ============================= FILTROS ============================= -->
+  <section class="secao" id="secaoFiltros">
+    <div class="secao-titulo"><h2><span data-i18n="secFiltros1"></span> <b data-i18n="secFiltros2"></b></h2></div>
+    <div class="barra-filtros">
+      <div class="filtro"><label for="filtroGrupo" data-i18n="campoGrupo"></label><select id="filtroGrupo"></select></div>
+      <div class="filtro"><label for="filtroTipo" data-i18n="campoTipo"></label><select id="filtroTipo"></select></div>
+      <div class="filtro"><label for="filtroTime" data-i18n="campoTime"></label><select id="filtroTime"></select></div>
+      <div class="filtro"><label for="filtroFrente" data-i18n="campoFrente"></label><select id="filtroFrente"></select></div>
+      <button class="btn btn-fantasma" onclick="limparFiltros()" data-i18n="limparFiltros"></button>
+      <div id="resumoFiltros"></div>
+    </div>
+  </section>
+
+  <!-- ============================= EXPLORE (DRILL DOWN) ============================= -->
+  <section class="secao" id="secaoExplorar">
+    <div class="secao-titulo">
+      <h2><span data-i18n="secExplorar1"></span> <b data-i18n="secExplorar2"></b></h2>
+      <span class="contagem" id="contagemTotal"></span>
+    </div>
+    <div class="migalhas" id="migalhas"></div>
+    <div id="areaDrill"></div>
+  </section>
+</main>
+
+<footer>
+  <b data-i18n="rodape1"></b><br>
+  <span data-i18n="rodape2"></span>
+</footer>
+
+<div id="areaToasts" aria-live="polite"></div>
+<div id="areaModais"></div>
+
+<script>
+/* =====================================================================
+   1. VOCABULÁRIO TRADUZIDO
+   Grupos, tipos, times e frentes são guardados em português (valor
+   canônico) e traduzidos na hora de exibir. Assim a navegação, os
+   filtros e a árvore continuam funcionando ao trocar de idioma.
+   ===================================================================== */
+const VOC = {
+  // Áreas (1º nível do menu)
+  'Marketing':'Marketing', 'Comercial':'Commercial', 'Sucesso do Cliente':'Customer Success',
+  'Financeiro':'Finance', 'Contábil':'Accounting', 'Geral':'General',
+  // Subgrupos de Marketing
+  'Growth':'Growth', 'Conteúdo':'Content', 'Inteligência':'Intelligence', 'Martech':'Martech',
+  'Eventos':'Events', 'Branding':'Branding', 'Social Media':'Social Media',
+  // Subgrupos das demais áreas
+  'Pré-vendas':'Pre-Sales', 'Vendas':'Sales', 'Propostas':'Proposals', 'Parcerias':'Partnerships',
+  'Onboarding':'Onboarding', 'Suporte':'Support', 'Retenção':'Retention', 'Satisfação':'Satisfaction',
+  'Faturamento':'Billing', 'Contas a Pagar':'Accounts Payable', 'Orçamento':'Budget', 'Cobrança':'Collections',
+  'Obrigações':'Tax Filings', 'Demonstrativos':'Statements', 'Fiscal':'Tax', 'Auditoria':'Audit',
+  'Institucional':'Corporate', 'Ferramentas':'Tools',
+  // Tipos de material
+  'Dash':'Dashboard', 'Planilha':'Spreadsheet', 'Documento':'Document', 'Apresentação':'Presentation',
+  'Formulário':'Form', 'Sistema':'System', 'Pasta':'Folder',
+  // Times
+  'Contabilidade':'Accounting', 'Operações':'Operations', 'TI':'IT',
+  // Frentes
+  'Aquisição':'Acquisition', 'Receita':'Revenue', 'Operação':'Operations', 'Compliance':'Compliance'
+};
+
+// Traduz um termo isolado (se não houver tradução, devolve o próprio termo).
+function tv(termo) {
+  if (IDIOMA === 'pt') return termo;
+  return VOC[termo] || termo;
+}
+
+// Traduz um caminho de grupo inteiro: "Marketing > Conteúdo" -> "Marketing > Content".
+function tGrupo(grupoPt) {
+  return String(grupoPt || '').split('>').map(function (n) { return tv(n.trim()); }).join(' > ');
+}
+
+/* =====================================================================
+   2. TEXTOS DA INTERFACE (PT / EN)
+   ===================================================================== */
+const TEXTOS = {
+  pt: {
+    tituloPagina:'Central de Links · Empresa ABC (Demo)',
+    faixaDemo:'Versão demonstrativa · dados fictícios · nenhuma informação real',
+    logoLinha1:'Central de', logoLinha2:'Links',
+    btnComoFunciona:'Como funciona', btnNovoLink:'Inserir novo link',
+    tituloTema:'Alternar tema claro/escuro',
+    // Rótulos de acessibilidade (aria-label)
+    ariaMenuMobile:'Abrir o menu de áreas', ariaIdioma:'Escolher o idioma da página',
+    ariaLimparBusca:'Limpar o texto da busca', ariaFecharModal:'Fechar esta janela',
+    heroTitulo1:'O que você está', heroTitulo2:'procurando?',
+    heroSub:'Encontre rapidamente painéis, planilhas, documentos e sistemas de todas as áreas da empresa.',
+    dicaDemo:'Experimente pesquisar por <code>funil</code>, <code>orçamento</code> ou <code>NPS</code> · ou cadastre um recurso no grupo <code>Pessoas &gt; Recrutamento</code> e veja uma área nova nascer no menu',
+    buscaPlaceholder:'Pesquise pelo nome, assunto, área, time ou tipo de material',
+    secResultados1:'Resultados', secResultados2:'encontrados',
+    voltarInicio:'Voltar ao início', mostrarMais:'Mostrar mais resultados',
+    semResultadosTitulo:'Nenhum recurso encontrado',
+    semResultadosTexto:'Tente pesquisar por outro termo ou remover alguns filtros.',
+    secRapidos1:'Acessos', secRapidos2:'rápidos', rapidosNota:'um destaque de cada área da empresa',
+    secFiltros1:'Refine por', secFiltros2:'filtros',
+    campoGrupo:'Área', campoTipo:'Tipo', campoTime:'Time', campoFrente:'Frente',
+    todosGrupos:'Todas as áreas', todosTipos:'Todos os tipos', todosTimes:'Todos os times', todasFrentes:'Todas as frentes',
+    limparFiltros:'Limpar filtros',
+    secExplorar1:'Explore todos os', secExplorar2:'recursos',
+    inicio:'Início', voltar:'Voltar', recursosDesteNivel:'Recursos deste nível',
+    grupoVazio:'Este grupo ainda não possui conteúdos cadastrados.',
+    rodape1:'Central de Links · Empresa ABC',
+    rodape2:'Versão demonstrativa — todos os dados são fictícios e nada é gravado.',
+    // Modal de detalhes
+    labelObservacao:'Observação', labelGrupo:'Área', labelTipo:'Tipo', labelTime:'Time',
+    labelFrente:'Frente', labelEndereco:'Endereço',
+    fechar:'Fechar', acessarRecurso:'Acessar recurso',
+    // Modal "Como funciona"
+    comoTitulo1:'Como o menu', comoTitulo2:'é criado',
+    comoCol1:'Linhas da planilha (coluna Área)', comoCol2:'Menu e submenus gerados',
+    comoColNome:'Nome do recurso', comoColGrupo:'Área (hierarquia)',
+    comoExplicacao:'Cada valor da coluna <b>Área</b> é quebrado pelo separador <b>&gt;</b>. O <b>1º nível</b> vira um item do <b>menu superior</b>; os níveis seguintes viram <b>submenus na navegação</b> (drill down). Nada é fixo no código — a estrutura inteira nasce dos dados.',
+    comoPasso1:'Escreva a área com <code>&gt;</code> entre os níveis, por exemplo <code>Marketing &gt; Eventos</code>.',
+    comoPasso2:'Não há limite de níveis: <code>Comercial &gt; Vendas &gt; Propostas</code> cria três camadas de navegação.',
+    comoPasso3:'Ao cadastrar um recurso com uma área inédita, o menu, os filtros, a busca e a árvore são reconstruídos na hora.',
+    comoPasso4:'Áreas iguais se agrupam sozinhas — basta repetir o mesmo texto na coluna.',
+    // Formulário
+    formTitulo1:'Inserir', formTitulo2:'novo link',
+    formAviso:'Na demo, o cadastro fica só nesta página (nada é gravado). Dica: use uma área nova, como <code>Pessoas &gt; Recrutamento</code>, e veja o menu superior ganhar o item <b>Pessoas</b>.',
+    formNome:'Nome', formObservacao:'Observação', formGrupo:'Área', formTipo:'Tipo',
+    formTime:'Time', formFrente:'Frente', formLink:'Link',
+    formNomePh:'Ex.: Painel de Recrutamento', formObsPh:'Breve descrição do recurso',
+    formGrupoPh:'Ex.: Pessoas > Recrutamento', formTipoPh:'Ex.: Dash', formTimePh:'Ex.: Growth',
+    formFrentePh:'Ex.: Operação', formLinkPh:'Ex.: exemplo.com/painel ou https://exemplo.com/painel',
+    formGrupoAjuda:'Use " > " para separar os níveis: 1º nível = menu, seguintes = submenus.',
+    formLinkAjuda:'Pode colar o endereço sem https:// — completamos para você.',
+    cancelar:'Cancelar', cadastrar:'Cadastrar link', enviando:'Enviando...',
+    // Mensagens
+    msgPreencha:function (c) { return 'Preencha o campo "' + c + '".'; },
+    msgDuplicado:'Este link já está cadastrado na Central.',
+    msgSucesso:'Link cadastrado com sucesso.',
+    msgAreaNova:function (a) { return ' O menu ganhou a área "' + a + '".'; },
+    msgAbriria:function (n, u) { return 'Demo: aqui o recurso "' + n + '" abriria em nova aba (' + u + ')'; },
+    recursos:function (n) { return n + ' recurso(s)'; },
+    recursosCadastrados:function (n) { return n + ' recursos cadastrados'; },
+    resultadosEncontrados:function (n) { return n + ' resultado(s) encontrado(s)'; },
+    verTodos:function (n) { return 'Ver todos os ' + n + ' resultados'; },
+    nenhumPara:function (t) { return 'Nenhum recurso encontrado para "' + t + '"'; }
+  },
+  en: {
+    tituloPagina:'Link Hub · Empresa ABC (Demo)',
+    faixaDemo:'Demo version · fictional data · no real information',
+    logoLinha1:'Link', logoLinha2:'Hub',
+    btnComoFunciona:'How it works', btnNovoLink:'Add new link',
+    tituloTema:'Toggle light/dark theme',
+    ariaMenuMobile:'Open the areas menu', ariaIdioma:'Choose the page language',
+    ariaLimparBusca:'Clear the search text', ariaFecharModal:'Close this dialog',
+    heroTitulo1:'What are you', heroTitulo2:'looking for?',
+    heroSub:'Quickly find dashboards, spreadsheets, documents and systems from every area of the company.',
+    dicaDemo:'Try searching for <code>funnel</code>, <code>budget</code> or <code>NPS</code> · or add a resource under <code>People &gt; Recruiting</code> and watch a new area appear in the menu',
+    buscaPlaceholder:'Search by name, subject, area, team or material type',
+    secResultados1:'Search', secResultados2:'results',
+    voltarInicio:'Back to start', mostrarMais:'Show more results',
+    semResultadosTitulo:'No resources found',
+    semResultadosTexto:'Try another search term or clear some filters.',
+    secRapidos1:'Quick', secRapidos2:'access', rapidosNota:'one highlight from each company area',
+    secFiltros1:'Refine with', secFiltros2:'filters',
+    campoGrupo:'Area', campoTipo:'Type', campoTime:'Team', campoFrente:'Track',
+    todosGrupos:'All areas', todosTipos:'All types', todosTimes:'All teams', todasFrentes:'All tracks',
+    limparFiltros:'Clear filters',
+    secExplorar1:'Explore all', secExplorar2:'resources',
+    inicio:'Home', voltar:'Back', recursosDesteNivel:'Resources at this level',
+    grupoVazio:'This group has no resources yet.',
+    rodape1:'Link Hub · Empresa ABC',
+    rodape2:'Demo version — all data is fictional and nothing is saved.',
+    labelObservacao:'Description', labelGrupo:'Area', labelTipo:'Type', labelTime:'Team',
+    labelFrente:'Track', labelEndereco:'Address',
+    fechar:'Close', acessarRecurso:'Open resource',
+    comoTitulo1:'How the menu', comoTitulo2:'is built',
+    comoCol1:'Spreadsheet rows (Area column)', comoCol2:'Generated menu and submenus',
+    comoColNome:'Resource name', comoColGrupo:'Area (hierarchy)',
+    comoExplicacao:'Each value in the <b>Area</b> column is split by the <b>&gt;</b> separator. The <b>first level</b> becomes an item in the <b>top menu</b>; the following levels become <b>submenus in the navigation</b> (drill down). Nothing is hard-coded — the whole structure comes from the data.',
+    comoPasso1:'Write the area with <code>&gt;</code> between levels, for example <code>Marketing &gt; Events</code>.',
+    comoPasso2:'There is no level limit: <code>Commercial &gt; Sales &gt; Proposals</code> creates three navigation layers.',
+    comoPasso3:'When you add a resource with a brand-new area, the menu, filters, search and tree are rebuilt instantly.',
+    comoPasso4:'Identical areas group themselves — just repeat the same text in the column.',
+    formTitulo1:'Add', formTitulo2:'new link',
+    formAviso:'In this demo the record lives only on this page (nothing is saved). Tip: use a new area, such as <code>People &gt; Recruiting</code>, and watch the top menu gain a <b>People</b> item.',
+    formNome:'Name', formObservacao:'Description', formGrupo:'Area', formTipo:'Type',
+    formTime:'Team', formFrente:'Track', formLink:'Link',
+    formNomePh:'E.g.: Recruiting Dashboard', formObsPh:'Short description of the resource',
+    formGrupoPh:'E.g.: People > Recruiting', formTipoPh:'E.g.: Dashboard', formTimePh:'E.g.: Growth',
+    formFrentePh:'E.g.: Operations', formLinkPh:'E.g.: example.com/dashboard or https://example.com/dashboard',
+    formGrupoAjuda:'Use " > " to separate levels: 1st level = menu, following = submenus.',
+    formLinkAjuda:'You can paste the address without https:// — we complete it for you.',
+    cancelar:'Cancel', cadastrar:'Add link', enviando:'Sending...',
+    msgPreencha:function (c) { return 'Please fill in the "' + c + '" field.'; },
+    msgDuplicado:'This link is already registered in the hub.',
+    msgSucesso:'Link added successfully.',
+    msgAreaNova:function (a) { return ' The menu gained the "' + a + '" area.'; },
+    msgAbriria:function (n, u) { return 'Demo: here the resource "' + n + '" would open in a new tab (' + u + ')'; },
+    recursos:function (n) { return n + ' resource(s)'; },
+    recursosCadastrados:function (n) { return n + ' resources registered'; },
+    resultadosEncontrados:function (n) { return n + ' result(s) found'; },
+    verTodos:function (n) { return 'See all ' + n + ' results'; },
+    nenhumPara:function (t) { return 'No resources found for "' + t + '"'; }
+  }
+};
+
+let IDIOMA = 'pt';
+
+// Atalho para pegar um texto da interface no idioma atual.
+function t(chave) { return TEXTOS[IDIOMA][chave]; }
+
+/* =====================================================================
+   3. BASE FICTÍCIA — 77 recursos de uma empresa de tecnologia
+   Simula as linhas da planilha: Nome | Observação | Área | Tipo | Time | Frente | Link
+   Grupo, tipo, time e frente ficam em português (canônico) e são
+   traduzidos na exibição; nome e observação têm as duas versões.
+   ===================================================================== */
+function r(nomePt, nomeEn, obsPt, obsEn, grupo, tipo, time, frente, link) {
+  return { nome:{pt:nomePt,en:nomeEn}, observacao:{pt:obsPt,en:obsEn},
+           grupo:grupo, tipo:tipo, time:time, frente:frente, link:link };
+}
+
+const DADOS_INICIAIS = [
+  /* ---------------- MARKETING > GROWTH ---------------- */
+  r('Painel de Funil de Aquisição','Acquisition Funnel Dashboard',
+    'Acompanhamento de MQL, SQL e SQO por período e canal','MQL, SQL and SQO tracking by period and channel',
+    'Marketing > Growth','Dash','Growth','Aquisição','https://exemplo.com/mkt/growth/funil'),
+  r('Metas de Geração de Demanda','Demand Generation Targets',
+    'Metas mensais de leads e oportunidades por origem','Monthly lead and opportunity targets by source',
+    'Marketing > Growth','Planilha','Growth','Aquisição','https://exemplo.com/mkt/growth/metas'),
+  r('Painel de Mídia Paga','Paid Media Dashboard',
+    'Investimento, CPL e retorno por plataforma de mídia','Spend, CPL and return by media platform',
+    'Marketing > Growth','Dash','Growth','Aquisição','https://exemplo.com/mkt/growth/midia'),
+  r('Registro de Testes A/B','A/B Test Log',
+    'Hipóteses, resultados e aprendizados dos testes em páginas','Hypotheses, results and learnings from page tests',
+    'Marketing > Growth','Documento','Growth','Aquisição','https://exemplo.com/mkt/growth/testes'),
+  r('Planilha de CAC e LTV por Canal','CAC and LTV by Channel',
+    'Custo de aquisição e valor do cliente por canal de entrada','Acquisition cost and customer value by entry channel',
+    'Marketing > Growth','Planilha','Growth','Receita','https://exemplo.com/mkt/growth/cac-ltv'),
+
+  /* ---------------- MARKETING > CONTEÚDO ---------------- */
+  r('Calendário Editorial','Editorial Calendar',
+    'Cronograma de publicações do blog e materiais ricos','Blog and gated content publishing schedule',
+    'Marketing > Conteúdo','Planilha','Conteúdo','Aquisição','https://exemplo.com/mkt/conteudo/calendario'),
+  r('Banco de Pautas e Palavras-chave','Topic and Keyword Bank',
+    'Oportunidades de conteúdo priorizadas por volume de busca','Content opportunities ranked by search volume',
+    'Marketing > Conteúdo','Planilha','Conteúdo','Aquisição','https://exemplo.com/mkt/conteudo/pautas'),
+  r('Painel de SEO e Tráfego Orgânico','SEO and Organic Traffic Dashboard',
+    'Posições, cliques e páginas de maior desempenho','Rankings, clicks and top performing pages',
+    'Marketing > Conteúdo','Dash','Conteúdo','Aquisição','https://exemplo.com/mkt/conteudo/seo'),
+  r('Guia de Tom de Voz','Tone of Voice Guide',
+    'Como a empresa escreve: estilo, vocabulário e exemplos','How the company writes: style, vocabulary and examples',
+    'Marketing > Conteúdo','Documento','Conteúdo','Institucional','https://exemplo.com/mkt/conteudo/tom-de-voz'),
+  r('Biblioteca de Materiais Ricos','Gated Content Library',
+    'E-books, guias e webinars disponíveis para campanhas','E-books, guides and webinars available for campaigns',
+    'Marketing > Conteúdo','Pasta','Conteúdo','Aquisição','https://exemplo.com/mkt/conteudo/biblioteca'),
+
+  /* ---------------- MARKETING > INTELIGÊNCIA ---------------- */
+  r('Painel Executivo de Marketing','Marketing Executive Dashboard',
+    'Visão consolidada dos indicadores para a diretoria','Consolidated indicator view for the leadership team',
+    'Marketing > Inteligência','Dash','Inteligência','Receita','https://exemplo.com/mkt/intel/executivo'),
+  r('Análise Competitiva','Competitive Analysis',
+    'Comparativo de posicionamento e presença dos concorrentes','Positioning and presence comparison across competitors',
+    'Marketing > Inteligência','Apresentação','Inteligência','Institucional','https://exemplo.com/mkt/intel/competitiva'),
+  r('Base Consolidada de Leads','Consolidated Lead Database',
+    'Base única de leads com origem, estágio e qualificação','Single lead base with source, stage and qualification',
+    'Marketing > Inteligência','Planilha','Inteligência','Aquisição','https://exemplo.com/mkt/intel/base-leads'),
+  r('Dicionário de Métricas','Metrics Dictionary',
+    'Definição oficial de cada indicador e como é calculado','Official definition of each indicator and how it is calculated',
+    'Marketing > Inteligência','Documento','Inteligência','Operação','https://exemplo.com/mkt/intel/dicionario'),
+  r('Painel de Atribuição de Receita','Revenue Attribution Dashboard',
+    'Receita influenciada por campanha e ponto de contato','Revenue influenced by campaign and touchpoint',
+    'Marketing > Inteligência','Dash','Inteligência','Receita','https://exemplo.com/mkt/intel/atribuicao'),
+
+  /* ---------------- MARKETING > MARTECH ---------------- */
+  r('Taxonomia de Campanhas e UTMs','Campaign and UTM Taxonomy',
+    'Padrão oficial de nomenclatura de campanhas e parâmetros','Official naming standard for campaigns and parameters',
+    'Marketing > Martech','Planilha','Martech','Operação','https://exemplo.com/mkt/martech/taxonomia'),
+  r('Documentação de Integrações','Integration Documentation',
+    'Fluxo de dados entre CRM, automação e site','Data flow between CRM, automation platform and website',
+    'Marketing > Martech','Documento','Martech','Operação','https://exemplo.com/mkt/martech/integracoes'),
+  r('Painel de Saúde da Base','Database Health Dashboard',
+    'Duplicidades, dados faltantes e higienização da base','Duplicates, missing fields and database hygiene',
+    'Marketing > Martech','Dash','Martech','Operação','https://exemplo.com/mkt/martech/saude-base'),
+  r('Mapa de Automações Ativas','Active Automation Map',
+    'Todos os fluxos automatizados em produção e seus gatilhos','All automated flows in production and their triggers',
+    'Marketing > Martech','Documento','Martech','Operação','https://exemplo.com/mkt/martech/automacoes'),
+  r('Plataforma de Automação de Marketing','Marketing Automation Platform',
+    'Acesso ao sistema de e-mail marketing e automações','Access to the email marketing and automation system',
+    'Marketing > Martech','Sistema','Martech','Operação','https://exemplo.com/mkt/martech/plataforma'),
+
+  /* ---------------- MARKETING > EVENTOS ---------------- */
+  r('Calendário Anual de Eventos','Annual Event Calendar',
+    'Feiras, congressos e eventos próprios do ano','Trade shows, conferences and owned events for the year',
+    'Marketing > Eventos','Planilha','Eventos','Aquisição','https://exemplo.com/mkt/eventos/calendario'),
+  r('Painel de Resultados por Evento','Event Results Dashboard',
+    'Leads captados, custo por lead e oportunidades geradas','Captured leads, cost per lead and opportunities generated',
+    'Marketing > Eventos','Dash','Eventos','Aquisição','https://exemplo.com/mkt/eventos/resultados'),
+  r('Formulário de Captação em Estande','Booth Lead Capture Form',
+    'Cadastro de visitantes durante os eventos presenciais','Visitor registration during in-person events',
+    'Marketing > Eventos','Formulário','Eventos','Aquisição','https://exemplo.com/mkt/eventos/captacao'),
+  r('Checklist de Pré-Evento','Pre-Event Checklist',
+    'Tarefas obrigatórias nas semanas que antecedem o evento','Mandatory tasks in the weeks before the event',
+    'Marketing > Eventos','Documento','Eventos','Operação','https://exemplo.com/mkt/eventos/checklist'),
+  r('Orçamento de Eventos','Event Budget',
+    'Previsto e realizado por evento e categoria de custo','Planned vs actual by event and cost category',
+    'Marketing > Eventos','Planilha','Eventos','Operação','https://exemplo.com/mkt/eventos/orcamento'),
+
+  /* ---------------- MARKETING > BRANDING ---------------- */
+  r('Manual da Marca','Brand Guidelines',
+    'Regras de uso do logo, cores, tipografia e aplicações','Rules for logo, colors, typography and applications',
+    'Marketing > Branding','Documento','Branding','Institucional','https://exemplo.com/mkt/branding/manual'),
+  r('Kit de Identidade Visual','Visual Identity Kit',
+    'Arquivos de logo, ícones e elementos gráficos oficiais','Official logo files, icons and graphic elements',
+    'Marketing > Branding','Pasta','Branding','Institucional','https://exemplo.com/mkt/branding/kit'),
+  r('Modelo de Apresentação Institucional','Corporate Presentation Template',
+    'Template padrão para apresentações externas da empresa','Standard template for external company presentations',
+    'Marketing > Branding','Apresentação','Branding','Institucional','https://exemplo.com/mkt/branding/template'),
+  r('Painel de Percepção de Marca','Brand Perception Dashboard',
+    'Menções, alcance e participação de voz no mercado','Mentions, reach and share of voice in the market',
+    'Marketing > Branding','Dash','Branding','Institucional','https://exemplo.com/mkt/branding/percepcao'),
+
+  /* ---------------- MARKETING > SOCIAL MEDIA ---------------- */
+  r('Calendário de Publicações','Publishing Calendar',
+    'Agenda de posts por rede social e formato','Post schedule by social network and format',
+    'Marketing > Social Media','Planilha','Social Media','Aquisição','https://exemplo.com/mkt/social/calendario'),
+  r('Painel de Performance por Rede','Channel Performance Dashboard',
+    'Alcance, engajamento e crescimento de seguidores','Reach, engagement and follower growth',
+    'Marketing > Social Media','Dash','Social Media','Aquisição','https://exemplo.com/mkt/social/performance'),
+  r('Diretrizes para Redes Sociais','Social Media Guidelines',
+    'O que pode e o que não pode ser publicado pelos times','What teams can and cannot publish',
+    'Marketing > Social Media','Documento','Social Media','Institucional','https://exemplo.com/mkt/social/diretrizes'),
+  r('Banco de Criativos','Creative Asset Bank',
+    'Peças aprovadas prontas para uso em campanhas','Approved assets ready to use in campaigns',
+    'Marketing > Social Media','Pasta','Social Media','Aquisição','https://exemplo.com/mkt/social/criativos'),
+
+  /* ---------------- COMERCIAL ---------------- */
+  r('Painel de Prospecção','Prospecting Dashboard',
+    'Atividades, conexões e reuniões agendadas por representante','Activities, connections and meetings booked per rep',
+    'Comercial > Pré-vendas','Dash','Pré-vendas','Aquisição','https://exemplo.com/com/prevendas/painel'),
+  r('Playbook de Prospecção','Prospecting Playbook',
+    'Abordagens, objeções comuns e critérios de qualificação','Approaches, common objections and qualification criteria',
+    'Comercial > Pré-vendas','Documento','Pré-vendas','Aquisição','https://exemplo.com/com/prevendas/playbook'),
+  r('Biblioteca de Cadências','Cadence Library',
+    'Sequências de contato por perfil de cliente','Contact sequences by customer profile',
+    'Comercial > Pré-vendas','Planilha','Pré-vendas','Aquisição','https://exemplo.com/com/prevendas/cadencias'),
+  r('Painel de Pipeline','Pipeline Dashboard',
+    'Oportunidades por estágio, valor e previsão de fechamento','Opportunities by stage, value and expected close',
+    'Comercial > Vendas','Dash','Vendas','Receita','https://exemplo.com/com/vendas/pipeline'),
+  r('Metas e Comissões','Targets and Commissions',
+    'Metas individuais e cálculo de comissionamento','Individual targets and commission calculation',
+    'Comercial > Vendas','Planilha','Vendas','Receita','https://exemplo.com/com/vendas/metas'),
+  r('CRM Comercial','Sales CRM',
+    'Sistema de gestão de contas, contatos e negociações','System for managing accounts, contacts and deals',
+    'Comercial > Vendas','Sistema','Vendas','Receita','https://exemplo.com/com/vendas/crm'),
+  r('Tabela de Preços','Price List',
+    'Valores vigentes por plano, módulo e faixa de contrato','Current prices by plan, module and contract tier',
+    'Comercial > Vendas','Planilha','Vendas','Receita','https://exemplo.com/com/vendas/precos'),
+  r('Modelo de Proposta Comercial','Commercial Proposal Template',
+    'Documento padrão para envio de propostas a clientes','Standard document for sending proposals to clients',
+    'Comercial > Propostas','Documento','Vendas','Receita','https://exemplo.com/com/propostas/modelo'),
+  r('Calculadora de Descontos','Discount Calculator',
+    'Simulação de desconto dentro da alçada de aprovação','Discount simulation within approval limits',
+    'Comercial > Propostas','Planilha','Vendas','Receita','https://exemplo.com/com/propostas/descontos'),
+  r('Painel de Canais e Parceiros','Channels and Partners Dashboard',
+    'Receita e volume de negócios trazidos por parceiros','Revenue and deal volume brought in by partners',
+    'Comercial > Parcerias','Dash','Parcerias','Receita','https://exemplo.com/com/parcerias/painel'),
+  r('Contrato Padrão de Parceria','Standard Partnership Agreement',
+    'Minuta aprovada pelo jurídico para novos parceiros','Legal-approved draft for onboarding new partners',
+    'Comercial > Parcerias','Documento','Parcerias','Compliance','https://exemplo.com/com/parcerias/contrato'),
+
+  /* ---------------- SUCESSO DO CLIENTE ---------------- */
+  r('Painel de Implantações','Implementation Dashboard',
+    'Projetos em andamento, prazo e etapas concluídas','Ongoing projects, deadlines and completed stages',
+    'Sucesso do Cliente > Onboarding','Dash','Onboarding','Operação','https://exemplo.com/cs/onboarding/painel'),
+  r('Checklist de Onboarding','Onboarding Checklist',
+    'Etapas obrigatórias da implantação de um novo cliente','Mandatory steps when implementing a new customer',
+    'Sucesso do Cliente > Onboarding','Documento','Onboarding','Operação','https://exemplo.com/cs/onboarding/checklist'),
+  r('Cronograma Padrão de Implantação','Standard Implementation Schedule',
+    'Linha do tempo de referência das primeiras semanas','Reference timeline for the first weeks',
+    'Sucesso do Cliente > Onboarding','Planilha','Onboarding','Operação','https://exemplo.com/cs/onboarding/cronograma'),
+  r('Painel de Chamados e SLA','Tickets and SLA Dashboard',
+    'Volume, tempo de resposta e cumprimento de SLA','Volume, response time and SLA compliance',
+    'Sucesso do Cliente > Suporte','Dash','Suporte','Operação','https://exemplo.com/cs/suporte/sla'),
+  r('Base de Conhecimento','Knowledge Base',
+    'Artigos de ajuda e soluções para dúvidas frequentes','Help articles and solutions for frequent questions',
+    'Sucesso do Cliente > Suporte','Documento','Suporte','Operação','https://exemplo.com/cs/suporte/base'),
+  r('Sistema de Atendimento','Helpdesk System',
+    'Ferramenta de abertura e acompanhamento de chamados','Tool for opening and tracking support tickets',
+    'Sucesso do Cliente > Suporte','Sistema','Suporte','Operação','https://exemplo.com/cs/suporte/sistema'),
+  r('Painel de Churn e Renovações','Churn and Renewals Dashboard',
+    'Contratos a vencer, renovados e cancelamentos do período','Contracts expiring, renewed and cancellations in the period',
+    'Sucesso do Cliente > Retenção','Dash','Retenção','Retenção','https://exemplo.com/cs/retencao/churn'),
+  r('Painel de Health Score','Health Score Dashboard',
+    'Saúde da carteira por uso, suporte e engajamento','Account health by usage, support and engagement',
+    'Sucesso do Cliente > Retenção','Dash','Retenção','Retenção','https://exemplo.com/cs/retencao/health'),
+  r('Playbook de Retenção','Retention Playbook',
+    'Ações recomendadas por sinal de risco identificado','Recommended actions by identified risk signal',
+    'Sucesso do Cliente > Retenção','Documento','Retenção','Retenção','https://exemplo.com/cs/retencao/playbook'),
+  r('Painel de NPS','NPS Dashboard',
+    'Nota, evolução e comentários por segmento de cliente','Score, trend and comments by customer segment',
+    'Sucesso do Cliente > Satisfação','Dash','Retenção','Retenção','https://exemplo.com/cs/satisfacao/nps'),
+  r('Formulário de Pesquisa de Satisfação','Satisfaction Survey Form',
+    'Coleta de avaliação após atendimento ou entrega','Feedback collection after service or delivery',
+    'Sucesso do Cliente > Satisfação','Formulário','Retenção','Retenção','https://exemplo.com/cs/satisfacao/pesquisa'),
+
+  /* ---------------- FINANCEIRO ---------------- */
+  r('Painel de Faturamento e MRR','Billing and MRR Dashboard',
+    'Receita recorrente, novos contratos e cancelamentos','Recurring revenue, new contracts and cancellations',
+    'Financeiro > Faturamento','Dash','Financeiro','Receita','https://exemplo.com/fin/faturamento/mrr'),
+  r('Controle de Emissão de Notas','Invoice Issuance Control',
+    'Acompanhamento das notas emitidas no mês','Tracking of invoices issued during the month',
+    'Financeiro > Faturamento','Planilha','Financeiro','Operação','https://exemplo.com/fin/faturamento/notas'),
+  r('Formulário de Solicitação de Pagamento','Payment Request Form',
+    'Envio de pedidos de pagamento para o Financeiro','Submitting payment requests to the finance team',
+    'Financeiro > Contas a Pagar','Formulário','Financeiro','Operação','https://exemplo.com/fin/pagar/solicitacao'),
+  r('Planilha de Contas a Pagar','Accounts Payable Sheet',
+    'Compromissos por fornecedor, vencimento e centro de custo','Commitments by supplier, due date and cost center',
+    'Financeiro > Contas a Pagar','Planilha','Financeiro','Operação','https://exemplo.com/fin/pagar/planilha'),
+  r('Política de Reembolso de Despesas','Expense Reimbursement Policy',
+    'Regras, limites e prazos para reembolso de despesas','Rules, limits and deadlines for expense reimbursement',
+    'Financeiro > Contas a Pagar','Documento','Financeiro','Compliance','https://exemplo.com/fin/pagar/politica'),
+  r('Orçamento por Área','Budget by Department',
+    'Verba anual distribuída entre as áreas da empresa','Annual budget distributed across company areas',
+    'Financeiro > Orçamento','Planilha','Financeiro','Operação','https://exemplo.com/fin/orcamento/areas'),
+  r('Painel de Realizado vs Orçado','Actual vs Budget Dashboard',
+    'Comparativo mensal entre o previsto e o executado','Monthly comparison between planned and executed',
+    'Financeiro > Orçamento','Dash','Financeiro','Operação','https://exemplo.com/fin/orcamento/realizado'),
+  r('Painel de Inadimplência','Overdue Accounts Dashboard',
+    'Títulos vencidos por faixa de atraso e cliente','Overdue invoices by delay range and customer',
+    'Financeiro > Cobrança','Dash','Financeiro','Receita','https://exemplo.com/fin/cobranca/inadimplencia'),
+  r('Régua de Cobrança','Collection Workflow',
+    'Sequência de avisos e ações por dias de atraso','Sequence of notices and actions by days overdue',
+    'Financeiro > Cobrança','Documento','Financeiro','Operação','https://exemplo.com/fin/cobranca/regua'),
+
+  /* ---------------- CONTÁBIL ---------------- */
+  r('Calendário de Obrigações Acessórias','Tax Filing Calendar',
+    'Prazos das declarações e entregas obrigatórias do ano','Deadlines for mandatory filings and submissions',
+    'Contábil > Obrigações','Planilha','Contabilidade','Compliance','https://exemplo.com/cont/obrigacoes/calendario'),
+  r('Checklist de Fechamento Mensal','Monthly Closing Checklist',
+    'Rotina de conferências antes do fechamento contábil','Review routine before the accounting close',
+    'Contábil > Obrigações','Documento','Contabilidade','Compliance','https://exemplo.com/cont/obrigacoes/fechamento'),
+  r('Balancete Mensal','Monthly Trial Balance',
+    'Saldos das contas contábeis consolidados por mês','Account balances consolidated by month',
+    'Contábil > Demonstrativos','Planilha','Contabilidade','Compliance','https://exemplo.com/cont/demo/balancete'),
+  r('DRE Gerencial','Management Income Statement',
+    'Resultado do período por linha de receita e despesa','Period result by revenue and expense line',
+    'Contábil > Demonstrativos','Dash','Contabilidade','Receita','https://exemplo.com/cont/demo/dre'),
+  r('Painel de Indicadores Contábeis','Accounting Indicators Dashboard',
+    'Margem, liquidez e endividamento ao longo do ano','Margin, liquidity and leverage throughout the year',
+    'Contábil > Demonstrativos','Dash','Contabilidade','Compliance','https://exemplo.com/cont/demo/indicadores'),
+  r('Guia de Classificação Fiscal','Tax Classification Guide',
+    'Como classificar cada tipo de despesa e receita','How to classify each expense and revenue type',
+    'Contábil > Fiscal','Documento','Contabilidade','Compliance','https://exemplo.com/cont/fiscal/guia'),
+  r('Apuração de Impostos','Tax Calculation Sheet',
+    'Cálculo mensal dos tributos por regime','Monthly tax calculation by regime',
+    'Contábil > Fiscal','Planilha','Contabilidade','Compliance','https://exemplo.com/cont/fiscal/apuracao'),
+  r('Documentação para Auditoria','Audit Documentation',
+    'Arquivos e comprovantes solicitados pela auditoria externa','Files and evidence requested by external audit',
+    'Contábil > Auditoria','Pasta','Contabilidade','Compliance','https://exemplo.com/cont/auditoria/docs'),
+
+  /* ---------------- GERAL ---------------- */
+  r('Organograma da Empresa','Company Org Chart',
+    'Estrutura de áreas, times e responsáveis','Structure of areas, teams and owners',
+    'Geral > Institucional','Documento','Operações','Institucional','https://exemplo.com/geral/institucional/organograma'),
+  r('Calendário Corporativo','Corporate Calendar',
+    'Feriados, reuniões gerais e datas importantes do ano','Holidays, all-hands meetings and key dates',
+    'Geral > Institucional','Planilha','Operações','Institucional','https://exemplo.com/geral/institucional/calendario'),
+  r('Políticas Internas','Internal Policies',
+    'Regras de conduta, segurança da informação e uso de recursos','Conduct, information security and resource usage rules',
+    'Geral > Institucional','Documento','Operações','Compliance','https://exemplo.com/geral/institucional/politicas'),
+  r('Central de Chamados de TI','IT Service Desk',
+    'Abertura de solicitações de equipamento, acesso e suporte','Requests for equipment, access and technical support',
+    'Geral > Ferramentas','Sistema','TI','Operação','https://exemplo.com/geral/ferramentas/chamados'),
+  r('Guia de Acessos e Sistemas','Systems and Access Guide',
+    'Quais sistemas cada área usa e como solicitar acesso','Which systems each area uses and how to request access',
+    'Geral > Ferramentas','Documento','TI','Operação','https://exemplo.com/geral/ferramentas/acessos')
+];
+
+// Ordem das áreas no menu (as não listadas entram depois, em ordem alfabética).
+const GRUPOS_PRIORITARIOS = ['Marketing', 'Comercial', 'Sucesso do Cliente', 'Financeiro', 'Contábil', 'Geral'];
+const LIMITE_SUGESTOES = 7;
+const TAMANHO_PAGINA = 30;
+
+// Estado central da demonstração (os "dados da planilha" vivem só na memória da página).
+const ESTADO = {
+  links: [], arvore: null, caminho: [],
+  filtros: { grupo: '', tipo: '', time: '', frente: '' },
+  termo: '', sugestaoAtiva: -1,
+  resultadosAtuais: [], resultadosVisiveis: 0,
+  ultimoFoco: null, idRecemCriado: '', grupoRecemCriado: '',
+  modalAberto: null   // referência do modal em exibição, para redesenhá-lo ao trocar de idioma
+};
+
+/* =====================================================================
+   4. TEMA E IDIOMA
+   ===================================================================== */
+
+// Aplica o tema escolhido e troca o ícone do botão.
+function aplicarTema(tema) {
+  document.documentElement.setAttribute('data-theme', tema);
+  document.getElementById('iconeTemaSol').classList.toggle('oculto', tema === 'dark');
+  document.getElementById('iconeTemaLua').classList.toggle('oculto', tema !== 'dark');
+}
+
+// Alterna claro/escuro e guarda a escolha no navegador.
+function alternarTema() {
+  const atual = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('demo_tema', atual); } catch (e) {}
+  aplicarTema(atual);
+}
+
+// Primeiro carregamento: usa a escolha salva; sem escolha, respeita o sistema; padrão claro.
+function iniciarTema() {
+  let tema = 'light';
+  try { tema = localStorage.getItem('demo_tema') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch (e) {}
+  aplicarTema(tema);
+}
+
+// Troca o idioma da aplicação inteira e redesenha tudo que depende de texto.
+function definirIdioma(idioma) {
+  IDIOMA = idioma;
+  try { localStorage.setItem('demo_idioma', idioma); } catch (e) {}
+  document.documentElement.lang = (idioma === 'pt' ? 'pt-BR' : 'en');
+  document.getElementById('btnPT').classList.toggle('ativo', idioma === 'pt');
+  document.getElementById('btnEN').classList.toggle('ativo', idioma === 'en');
+  aplicarTextos();
+  reconstruirInterface();
+  if (ESTADO.termo || ESTADO.filtros.grupo || ESTADO.filtros.tipo || ESTADO.filtros.time || ESTADO.filtros.frente) aplicarFiltros();
+  retraduzirModalAberto();
+}
+
+// Escreve na tela todos os textos fixos marcados com data-i18n.
+function aplicarTextos() {
+  document.title = t('tituloPagina');
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.getElementById('dicaDemo').innerHTML = t('dicaDemo');
+  document.getElementById('campoBusca').placeholder = t('buscaPlaceholder');
+  document.getElementById('btnTema').title = t('tituloTema');
+  // Rótulos de acessibilidade (não aparecem na tela, mas o leitor de tela lê).
+  document.getElementById('btnMenuMobile').setAttribute('aria-label', t('ariaMenuMobile'));
+  document.getElementById('grupoIdioma').setAttribute('aria-label', t('ariaIdioma'));
+  document.getElementById('btnLimparBusca').setAttribute('aria-label', t('ariaLimparBusca'));
+}
+
+// Primeiro carregamento do idioma: usa o salvo; sem escolha, detecta o idioma do navegador.
+function iniciarIdioma() {
+  let idioma = 'pt';
+  try {
+    idioma = localStorage.getItem('demo_idioma') ||
+      ((navigator.language || 'pt').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en');
+  } catch (e) {}
+  IDIOMA = idioma;
+  document.documentElement.lang = (idioma === 'pt' ? 'pt-BR' : 'en');
+  document.getElementById('btnPT').classList.toggle('ativo', idioma === 'pt');
+  document.getElementById('btnEN').classList.toggle('ativo', idioma === 'en');
+}
+
+/* =====================================================================
+   5. UTILITÁRIOS
+   ===================================================================== */
+
+// Deixa qualquer texto em minúsculas e sem acentos, para comparar buscas.
+function normalizarTexto(texto) {
+  return String(texto == null ? '' : texto).toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+}
+
+// Escapa HTML antes de inserir dados na tela.
+function escaparHtml(texto) {
+  return String(texto == null ? '' : texto)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Adia a execução até o usuário parar de digitar.
+function debounce(fn, espera) {
+  let timer = null;
+  return function () {
+    const args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () { fn.apply(null, args); }, espera);
+  };
+}
+
+// Mede quantas letras diferem entre duas palavras (tolerância a erro de digitação).
+function distanciaEdicao(a, b) {
+  if (Math.abs(a.length - b.length) > 1) return 99;
+  const m = a.length, n = b.length;
+  const linha = Array.from({ length: n + 1 }, function (_, j) { return j; });
+  for (let i = 1; i <= m; i++) {
+    let anterior = linha[0]; linha[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const temp = linha[j];
+      linha[j] = Math.min(linha[j] + 1, linha[j - 1] + 1, anterior + (a[i - 1] === b[j - 1] ? 0 : 1));
+      anterior = temp;
+    }
+  }
+  return linha[n];
+}
+
+// Destaca com <mark> o trecho correspondente ao termo, ignorando acentos.
+function destacarTrecho(texto, termo) {
+  const original = String(texto == null ? '' : texto);
+  const alvo = normalizarTexto(termo);
+  if (!alvo || !original) return escaparHtml(original);
+  let normalizado = '';
+  for (const ch of original) {
+    const n = normalizarTexto(ch);
+    normalizado += (n.length === 1 ? n : ch.toLowerCase());
+  }
+  let inicio = normalizado.indexOf(alvo);
+  let tamanho = alvo.length;
+  if (inicio === -1) {
+    const primeira = alvo.split(/\s+/)[0];
+    inicio = normalizado.indexOf(primeira);
+    tamanho = primeira.length;
+  }
+  if (inicio === -1) return escaparHtml(original);
+  return escaparHtml(original.slice(0, inicio)) + '<mark>' +
+    escaparHtml(original.slice(inicio, inicio + tamanho)) + '</mark>' +
+    escaparHtml(original.slice(inicio + tamanho));
+}
+
+// Devolve o nome do item no idioma atual.
+function nomeDe(item) { return item.nome[IDIOMA] || item.nome.pt; }
+// Devolve a observação do item no idioma atual.
+function obsDe(item) { return item.observacao[IDIOMA] || item.observacao.pt; }
+
+// Ícone SVG de linha, monocromático, por tipo de material.
+function iconeTipo(tipo) {
+  const svgs = {
+    'Planilha':'<path d="M3 4h18v16H3z"/><path d="M3 9h18M9 9v11"/>',
+    'Dash':'<path d="M3 3v18h18"/><path d="M7 14v4M12 9v9M17 5v13"/>',
+    'Apresentação':'<path d="M3 4h18v11H3z"/><path d="M12 15v4M8 21h8"/>',
+    'Formulário':'<path d="M5 3h14v18H5z"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+    'Documento':'<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/>',
+    'Sistema':'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>',
+    'Pasta':'<path d="M3 7h6l2 2h10v10H3z"/>'
+  };
+  const d = svgs[tipo] || '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>';
+  return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
+}
+
+// Tag visual do tipo (destaque só para painéis; o restante fica neutro).
+function tagTipo(tipo) {
+  if (!tipo) return '';
+  const classe = tipo === 'Dash' ? 'tag-acento' : '';
+  return '<span class="tag ' + classe + '">' + escaparHtml(tv(tipo)) + '</span>';
+}
+
+/* =====================================================================
+   6. PREPARAÇÃO DOS DADOS (simula a leitura da planilha)
+   ===================================================================== */
+
+// Quebra o texto da área em níveis (aceita ">" e também "/").
+function construirHierarquia(grupoTexto) {
+  if (!grupoTexto) return ['Geral'];
+  const texto = String(grupoTexto).indexOf('>') === -1 && String(grupoTexto).indexOf('/') !== -1
+    ? String(grupoTexto).split('/').join('>') : String(grupoTexto);
+  const niveis = texto.split('>').map(function (n) { return n.trim(); }).filter(function (n) { return n !== ''; });
+  return niveis.length ? niveis : ['Geral'];
+}
+
+// Transforma as linhas fictícias em objetos completos, com id e níveis de área.
+function prepararLinks(linhas) {
+  return linhas.map(function (l, i) {
+    return {
+      id: 'demo-' + (i + 1),
+      nome: l.nome, observacao: l.observacao, grupo: l.grupo,
+      niveisGrupo: construirHierarquia(l.grupo),
+      tipo: l.tipo, time: l.time, frente: l.frente, link: l.link
+    };
+  });
+}
+
+/* =====================================================================
+   7. BUSCA INTELIGENTE
+   ===================================================================== */
+
+// Dá uma nota de relevância ao item conforme o termo (nome pesa mais; tolera 1 letra errada).
+// Pesquisa nos textos do idioma atual e também nos termos traduzidos de área, tipo, time e frente.
+function pontuarItem(item, termoNorm, palavras) {
+  const nome = normalizarTexto(nomeDe(item));
+  const grupo = normalizarTexto(item.grupo + ' ' + tGrupo(item.grupo));
+  const tipo = normalizarTexto(item.tipo + ' ' + tv(item.tipo));
+  const timeFrente = normalizarTexto(item.time + ' ' + tv(item.time) + ' ' + item.frente + ' ' + tv(item.frente));
+  const obs = normalizarTexto(obsDe(item));
+  const tudo = nome + ' ' + grupo + ' ' + tipo + ' ' + timeFrente + ' ' + obs;
+
+  const tokensNome = nome.split(/\s+/);
+  let notaFuzzy = 0;
+  for (const p of palavras) {
+    if (tudo.includes(p)) continue;
+    const quaseIgual = p.length >= 5 && tokensNome.some(function (tk) { return distanciaEdicao(p, tk) <= 1; });
+    if (!quaseIgual) return 0;
+    notaFuzzy += 15;
+  }
+
+  let nota = notaFuzzy;
+  if (nome === termoNorm) nota += 100;
+  else if (nome.startsWith(termoNorm)) nota += 80;
+  else if (nome.includes(termoNorm)) nota += 60;
+  palavras.forEach(function (p) {
+    if (nome.includes(p)) nota += 25;
+    if (grupo.includes(p)) nota += 12;
+    if (tipo.includes(p)) nota += 9;
+    if (timeFrente.includes(p)) nota += 6;
+    if (obs.includes(p)) nota += 3;
+  });
+  return nota;
+}
+
+// Pesquisa nos dados em memória e devolve por ordem de relevância.
+function pesquisarLinks(termo) {
+  const termoNorm = normalizarTexto(termo);
+  if (!termoNorm) return [];
+  const palavras = termoNorm.split(/\s+/).filter(Boolean);
+  return ESTADO.links
+    .map(function (item) { return { item: item, nota: pontuarItem(item, termoNorm, palavras) }; })
+    .filter(function (x) { return x.nota > 0; })
+    .sort(function (a, b) { return b.nota - a.nota; })
+    .map(function (x) { return x.item; });
+}
+
+// Mostra as sugestões abaixo do campo enquanto digita.
+function renderizarSugestoes(resultados) {
+  const caixa = document.getElementById('sugestoes');
+  const campo = document.getElementById('campoBusca');
+  ESTADO.sugestaoAtiva = -1;
+
+  if (!ESTADO.termo) { caixa.classList.add('oculto'); campo.setAttribute('aria-expanded', 'false'); return; }
+  caixa.classList.remove('oculto');
+  campo.setAttribute('aria-expanded', 'true');
+
+  if (!resultados.length) {
+    caixa.innerHTML = '<div class="sugestao" style="cursor:default;color:var(--muted)">' +
+      escaparHtml(t('nenhumPara')(ESTADO.termo)) + '</div>';
+    return;
+  }
+  let html = resultados.slice(0, LIMITE_SUGESTOES).map(function (item) {
+    return '<button class="sugestao" role="option" data-id="' + item.id + '">' +
+      '<span class="icone-tipo">' + iconeTipo(item.tipo) + '</span>' +
+      '<span class="sugestao-info">' +
+        '<span class="sugestao-nome">' + destacarTrecho(nomeDe(item), ESTADO.termo) + '</span>' +
+        '<span class="sugestao-caminho">' + escaparHtml(tGrupo(item.grupo)) + '</span>' +
+      '</span>' + tagTipo(item.tipo) + '</button>';
+  }).join('');
+  html += '<button class="sugestao sugestao-ver-todos" data-ver-todos="1">' + escaparHtml(t('verTodos')(resultados.length)) + '</button>';
+  caixa.innerHTML = html;
+
+  caixa.querySelectorAll('.sugestao').forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (el.dataset.verTodos) { abrirTodosResultados(); return; }
+      const item = ESTADO.links.find(function (l) { return l.id === el.dataset.id; });
+      if (item) abrirModalDetalhes(item);
+    });
+  });
+}
+
+// Reação à digitação (debounce de 250ms).
+const aoDigitarBusca = debounce(function () {
+  const termo = document.getElementById('campoBusca').value;
+  ESTADO.termo = termo.trim();
+  document.getElementById('btnLimparBusca').style.display = ESTADO.termo ? 'block' : 'none';
+  renderizarSugestoes(pesquisarLinks(ESTADO.termo));
+}, 250);
+
+// Abre a grade completa de resultados (busca + filtros combinados).
+function abrirTodosResultados() {
+  document.getElementById('sugestoes').classList.add('oculto');
+  aplicarFiltros();
+  document.getElementById('secaoResultados').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Limpa o campo de busca.
+function limparBusca() {
+  const campo = document.getElementById('campoBusca');
+  campo.value = ''; ESTADO.termo = '';
+  document.getElementById('btnLimparBusca').style.display = 'none';
+  document.getElementById('sugestoes').classList.add('oculto');
+  campo.focus();
+  aplicarFiltros();
+}
+
+// Setas / Enter / Esc nas sugestões.
+function tecladoBusca(ev) {
+  const caixa = document.getElementById('sugestoes');
+  if (caixa.classList.contains('oculto')) {
+    if (ev.key === 'Enter' && ESTADO.termo) abrirTodosResultados();
+    return;
+  }
+  const opcoes = Array.from(caixa.querySelectorAll('.sugestao'));
+  if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+    ev.preventDefault();
+    ESTADO.sugestaoAtiva += (ev.key === 'ArrowDown' ? 1 : -1);
+    if (ESTADO.sugestaoAtiva < 0) ESTADO.sugestaoAtiva = opcoes.length - 1;
+    if (ESTADO.sugestaoAtiva >= opcoes.length) ESTADO.sugestaoAtiva = 0;
+    opcoes.forEach(function (o, i) { o.classList.toggle('selecionada', i === ESTADO.sugestaoAtiva); });
+  } else if (ev.key === 'Enter') {
+    ev.preventDefault();
+    if (ESTADO.sugestaoAtiva >= 0 && opcoes[ESTADO.sugestaoAtiva]) opcoes[ESTADO.sugestaoAtiva].click();
+    else abrirTodosResultados();
+  } else if (ev.key === 'Escape') {
+    caixa.classList.add('oculto');
+  }
+}
+
+/* =====================================================================
+   8. FILTROS
+   ===================================================================== */
+
+// Monta as opções dos filtros: o valor fica em português, o rótulo aparece traduzido.
+function renderizarFiltros() {
+  const montar = function (idSelect, extrairValor, chaveTodos) {
+    const sel = document.getElementById(idSelect);
+    const valorAtual = sel.value;
+    const valores = Array.from(new Set(ESTADO.links.map(extrairValor).filter(Boolean)))
+      .sort(function (a, b) { return tv(a).localeCompare(tv(b), 'pt-BR'); });
+    sel.innerHTML = '<option value="">' + escaparHtml(t(chaveTodos)) + '</option>' +
+      valores.map(function (v) { return '<option value="' + escaparHtml(v) + '">' + escaparHtml(tv(v)) + '</option>'; }).join('');
+    sel.value = valorAtual || '';
+  };
+  montar('filtroGrupo', function (l) { return l.niveisGrupo[0] || ''; }, 'todosGrupos');
+  montar('filtroTipo', function (l) { return l.tipo; }, 'todosTipos');
+  montar('filtroTime', function (l) { return l.time; }, 'todosTimes');
+  montar('filtroFrente', function (l) { return l.frente; }, 'todasFrentes');
+}
+
+// Liga os eventos de mudança dos filtros (uma vez só).
+function ligarEventosFiltros() {
+  [['filtroGrupo','grupo'],['filtroTipo','tipo'],['filtroTime','time'],['filtroFrente','frente']].forEach(function (par) {
+    document.getElementById(par[0]).addEventListener('change', function (ev) {
+      ESTADO.filtros[par[1]] = ev.target.value;
+      aplicarFiltros();
+    });
+  });
+}
+
+// Combina busca + filtros e mostra os resultados.
+function aplicarFiltros() {
+  const f = ESTADO.filtros;
+  const temFiltro = f.grupo || f.tipo || f.time || f.frente;
+  let base = ESTADO.termo ? pesquisarLinks(ESTADO.termo) : ESTADO.links.slice();
+
+  if (f.grupo)  base = base.filter(function (l) { return (l.niveisGrupo[0] || '') === f.grupo; });
+  if (f.tipo)   base = base.filter(function (l) { return l.tipo === f.tipo; });
+  if (f.time)   base = base.filter(function (l) { return l.time === f.time; });
+  if (f.frente) base = base.filter(function (l) { return l.frente === f.frente; });
+
+  document.getElementById('resumoFiltros').textContent =
+    (temFiltro || ESTADO.termo) ? t('resultadosEncontrados')(base.length) : '';
+
+  if (!temFiltro && !ESTADO.termo) { fecharResultados(); return; }
+  renderizarResultados(base);
+}
+
+// Zera todos os filtros.
+function limparFiltros() {
+  ESTADO.filtros = { grupo: '', tipo: '', time: '', frente: '' };
+  ['filtroGrupo', 'filtroTipo', 'filtroTime', 'filtroFrente'].forEach(function (id) {
+    document.getElementById(id).value = '';
+  });
+  aplicarFiltros();
+}
+
+// Exibe a grade de resultados com renderização progressiva.
+function renderizarResultados(itens) {
+  ESTADO.resultadosAtuais = itens;
+  ESTADO.resultadosVisiveis = 0;
+  document.getElementById('secaoResultados').classList.remove('oculto');
+  document.getElementById('gradeResultados').innerHTML = '';
+  document.getElementById('contagemResultados').textContent = t('recursos')(itens.length);
+  document.getElementById('semResultados').classList.toggle('oculto', itens.length > 0);
+  mostrarMaisResultados();
+}
+
+// Próxima "página" de resultados.
+function mostrarMaisResultados() {
+  const grade = document.getElementById('gradeResultados');
+  const proximos = ESTADO.resultadosAtuais.slice(ESTADO.resultadosVisiveis, ESTADO.resultadosVisiveis + TAMANHO_PAGINA);
+  proximos.forEach(function (item) { grade.appendChild(criarCardLink(item)); });
+  ESTADO.resultadosVisiveis += proximos.length;
+  document.getElementById('btnMostrarMais').classList.toggle('oculto',
+    ESTADO.resultadosVisiveis >= ESTADO.resultadosAtuais.length);
+}
+
+// Esconde a visão de resultados.
+function fecharResultados() {
+  document.getElementById('secaoResultados').classList.add('oculto');
+}
+
+/* =====================================================================
+   9. NAVEGAÇÃO HIERÁRQUICA (menu > submenus)
+   ===================================================================== */
+
+// Constrói a árvore de áreas: cada nível separado por ">" vira um nó (níveis ilimitados).
+function criarArvoreDeGrupos(links) {
+  const raiz = { nome: 'Início', filhos: {}, itens: [], total: 0 };
+  links.forEach(function (l) {
+    let no = raiz;
+    l.niveisGrupo.forEach(function (nivel) {
+      if (!no.filhos[nivel]) no.filhos[nivel] = { nome: nivel, filhos: {}, itens: [], total: 0 };
+      no = no.filhos[nivel];
+    });
+    no.itens.push(l);
+  });
+  (function contar(no) {
+    no.total = no.itens.length + Object.keys(no.filhos).reduce(function (s, k) { return s + contar(no.filhos[k]); }, 0);
+    return no.total;
+  })(raiz);
+  return raiz;
+}
+
+// Encontra o nó da árvore para um caminho como ['Marketing','Eventos'].
+function encontrarNo(caminho) {
+  let no = ESTADO.arvore;
+  for (const nivel of caminho) {
+    if (!no || !no.filhos[nivel]) return null;
+    no = no.filhos[nivel];
+  }
+  return no;
+}
+
+// Ordena áreas: as prioritárias primeiro, o resto em ordem alfabética.
+function ordenarGrupos(nomes) {
+  return nomes.sort(function (a, b) {
+    const ia = GRUPOS_PRIORITARIOS.indexOf(a);
+    const ib = GRUPOS_PRIORITARIOS.indexOf(b);
+    if (ia !== -1 && ib !== -1) return ia - ib;
+    if (ia !== -1) return -1;
+    if (ib !== -1) return 1;
+    return tv(a).localeCompare(tv(b), 'pt-BR');
+  });
+}
+
+// Navega para um nível da árvore.
+function navegarPara(caminho) {
+  ESTADO.caminho = caminho;
+  renderizarDrillDown();
+  renderizarMenu();
+}
+
+// Breadcrumbs clicáveis.
+function renderizarMigalhas() {
+  const alvo = document.getElementById('migalhas');
+  let html = '<button onclick="navegarPara([])">' + escaparHtml(t('inicio')) + '</button>';
+  ESTADO.caminho.forEach(function (nivel, i) {
+    const parcial = JSON.stringify(ESTADO.caminho.slice(0, i + 1)).replace(/"/g, '&quot;');
+    html += '<span class="sep">›</span>';
+    html += (i === ESTADO.caminho.length - 1)
+      ? '<span class="atual">' + escaparHtml(tv(nivel)) + '</span>'
+      : '<button onclick=\'navegarPara(' + parcial + ')\'>' + escaparHtml(tv(nivel)) + '</button>';
+  });
+  alvo.innerHTML = html;
+}
+
+// Desenha o nível atual: cards de subáreas + recursos do nível.
+function renderizarDrillDown() {
+  const area = document.getElementById('areaDrill');
+  const no = encontrarNo(ESTADO.caminho) || ESTADO.arvore;
+  renderizarMigalhas();
+  area.innerHTML = '';
+
+  if (ESTADO.caminho.length) {
+    const voltar = document.createElement('button');
+    voltar.className = 'btn btn-fantasma';
+    voltar.id = 'btnVoltarNivel';
+    voltar.innerHTML = '&larr;&nbsp; ' + escaparHtml(t('voltar'));
+    voltar.onclick = function () { navegarPara(ESTADO.caminho.slice(0, -1)); };
+    area.appendChild(voltar);
+  }
+
+  const nomesFilhos = ordenarGrupos(Object.keys(no.filhos));
+
+  if (nomesFilhos.length) {
+    const grade = document.createElement('div');
+    grade.className = 'grade-grupos';
+    nomesFilhos.forEach(function (nome) {
+      const filho = no.filhos[nome];
+      const card = document.createElement('button');
+      card.className = 'card-grupo' + (ESTADO.caminho.length ? ' compacto' : '');
+      const filhosNomes = Object.keys(filho.filhos);
+      const descr = filhosNomes.length
+        ? filhosNomes.slice(0, 4).map(tv).join(', ') + (filhosNomes.length > 4 ? '…' : '')
+        : filho.itens.slice(0, 2).map(nomeDe).join(', ');
+      card.innerHTML =
+        '<div style="min-width:0"><h3>' + escaparHtml(tv(nome)) + '</h3>' +
+        '<div class="qtd">' + escaparHtml(t('recursos')(filho.total)) + '</div>' +
+        (ESTADO.caminho.length ? '' : '<div class="descr">' + escaparHtml(descr) + '</div>') + '</div>' +
+        '<span class="seta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></span>';
+      card.onclick = function () { navegarPara(ESTADO.caminho.concat([nome])); };
+      grade.appendChild(card);
+    });
+    area.appendChild(grade);
+  }
+
+  if (no.itens.length) {
+    if (nomesFilhos.length) {
+      const sub = document.createElement('div');
+      sub.className = 'subtitulo-nivel';
+      sub.textContent = t('recursosDesteNivel');
+      area.appendChild(sub);
+    }
+    const gradeItens = document.createElement('div');
+    gradeItens.className = 'grade';
+    no.itens.forEach(function (item) { gradeItens.appendChild(criarCardLink(item)); });
+    area.appendChild(gradeItens);
+  }
+
+  if (!nomesFilhos.length && !no.itens.length) {
+    area.innerHTML += '<div class="estado-vazio"><h3>' + escaparHtml(t('semResultadosTitulo')) +
+      '</h3><p>' + escaparHtml(t('grupoVazio')) + '</p></div>';
+  }
+}
+
+// Menu superior: um item por área de 1º nível encontrada nos dados.
+function renderizarMenu() {
+  const nav = document.getElementById('menuPrincipal');
+  const grupos = ordenarGrupos(Object.keys(ESTADO.arvore.filhos));
+  nav.innerHTML = grupos.map(function (g) {
+    const ativo = ESTADO.caminho[0] === g ? ' ativo' : '';
+    const novo = ESTADO.grupoRecemCriado === g ? ' novo-item' : '';
+    return '<button class="menu-item' + ativo + novo + '" data-grupo="' + escaparHtml(g) + '">' + escaparHtml(tv(g)) + '</button>';
+  }).join('');
+  nav.querySelectorAll('.menu-item').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      navegarPara([btn.dataset.grupo]);
+      nav.classList.remove('aberto');
+      document.getElementById('secaoExplorar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+// Abre/fecha o menu compacto no celular.
+function alternarMenuMobile() {
+  document.getElementById('menuPrincipal').classList.toggle('aberto');
+}
+
+// Volta ao estado inicial.
+function irParaInicio() {
+  navegarPara([]);
+  fecharResultados();
+  limparFiltros();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* =====================================================================
+   10. CARDS E "ABERTURA" DE LINKS
+   ===================================================================== */
+
+// Cria o card de um recurso. Clique no card = detalhes; clique no ícone = abre o endereço fictício.
+function criarCardLink(item) {
+  const card = document.createElement('div');
+  card.className = 'card-link' + (item.id === ESTADO.idRecemCriado ? ' recem-criado' : '');
+  card.setAttribute('role', 'button');
+  card.setAttribute('tabindex', '0');
+  card.innerHTML =
+    '<div class="topo"><span class="icone-tipo">' + iconeTipo(item.tipo) + '</span>' +
+      '<button class="btn-abrir" aria-label="' + escaparHtml(nomeDe(item)) + '">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>' +
+      '</button></div>' +
+    '<h3>' + (ESTADO.termo ? destacarTrecho(nomeDe(item), ESTADO.termo) : escaparHtml(nomeDe(item))) + '</h3>' +
+    (obsDe(item) ? '<div class="obs">' + escaparHtml(obsDe(item)) + '</div>' : '') +
+    '<div class="caminho">' + escaparHtml(tGrupo(item.grupo)) + '</div>' +
+    '<div class="meta">' + tagTipo(item.tipo) +
+      (item.time ? '<span>' + escaparHtml(tv(item.time)) + '</span>' : '') +
+      (item.frente ? '<span>' + escaparHtml(tv(item.frente)) + '</span>' : '') + '</div>';
+
+  card.querySelector('.btn-abrir').addEventListener('click', function (ev) {
+    ev.stopPropagation();
+    abrirLinkDemo(item);
+  });
+  const abrirDetalhes = function () { abrirModalDetalhes(item); };
+  card.addEventListener('click', abrirDetalhes);
+  card.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrirDetalhes(); }
+  });
+  return card;
+}
+
+// Na demo os endereços são fictícios: mostramos um aviso em vez de navegar de verdade.
+function abrirLinkDemo(item) {
+  mostrarToast(t('msgAbriria')(nomeDe(item), item.link), 'sucesso');
+}
+
+// Acessos rápidos: um destaque de cada área principal.
+function renderizarAcessosRapidos() {
+  const grade = document.getElementById('gradeRapidos');
+  grade.innerHTML = '';
+  const porGrupo = {};
+  ESTADO.links.forEach(function (l) {
+    const g = l.niveisGrupo[0] || 'Geral';
+    if (!porGrupo[g]) porGrupo[g] = [];
+    porGrupo[g].push(l);
+  });
+  const selecao = [];
+  ordenarGrupos(Object.keys(porGrupo)).forEach(function (g) {
+    // prioriza um painel (Dash) como destaque da área; se não houver, pega o primeiro item
+    const lista = porGrupo[g];
+    const destaque = lista.find(function (l) { return l.tipo === 'Dash'; }) || lista[0];
+    if (destaque && selecao.length < 8) selecao.push(destaque);
+  });
+  selecao.forEach(function (item) { grade.appendChild(criarCardLink(item)); });
+}
+
+/* =====================================================================
+   11. MODAIS
+   ===================================================================== */
+
+// Modal genérico acessível: Esc fecha, clique fora fecha, foco preso dentro e devolvido ao fechar.
+function abrirModal(htmlInterno, largo) {
+  ESTADO.ultimoFoco = document.activeElement;
+  const fundo = document.createElement('div');
+  fundo.className = 'fundo-modal';
+  fundo.innerHTML = '<div class="modal' + (largo ? ' largo' : '') + '" role="dialog" aria-modal="true">' + htmlInterno + '</div>';
+  document.getElementById('areaModais').appendChild(fundo);
+
+  const modal = fundo.querySelector('.modal');
+  const fechar = function () {
+    fundo.remove();
+    document.removeEventListener('keydown', aoTeclar);
+    if (ESTADO.modalAberto && ESTADO.modalAberto.modal === modal) ESTADO.modalAberto = null;
+    if (ESTADO.ultimoFoco && ESTADO.ultimoFoco.focus) ESTADO.ultimoFoco.focus();
+  };
+  fundo.addEventListener('mousedown', function (ev) { if (ev.target === fundo) fechar(); });
+  modal.querySelectorAll('[data-fechar]').forEach(function (b) { b.addEventListener('click', fechar); });
+
+  const aoTeclar = function (ev) {
+    if (ev.key === 'Escape') { fechar(); return; }
+    if (ev.key !== 'Tab') return;
+    const focaveis = modal.querySelectorAll('button, input, textarea, select, a[href]');
+    if (!focaveis.length) return;
+    const primeiro = focaveis[0], ultimo = focaveis[focaveis.length - 1];
+    if (ev.shiftKey && document.activeElement === primeiro) { ev.preventDefault(); ultimo.focus(); }
+    else if (!ev.shiftKey && document.activeElement === ultimo) { ev.preventDefault(); primeiro.focus(); }
+  };
+  document.addEventListener('keydown', aoTeclar);
+
+  const primeiroFocavel = modal.querySelector('button, input, textarea, select');
+  if (primeiroFocavel) primeiroFocavel.focus();
+
+  // Guarda a referência: quem abriu o modal registra em ref.reabrir como redesenhá-lo.
+  const ref = { fechar: fechar, modal: modal, reabrir: null };
+  ESTADO.modalAberto = ref;
+  return ref;
+}
+
+// Redesenha o modal aberto no idioma atual, preservando o que já foi digitado no formulário.
+function retraduzirModalAberto() {
+  const anterior = ESTADO.modalAberto;
+  if (!anterior || typeof anterior.reabrir !== 'function') return;
+  const valores = {};
+  anterior.modal.querySelectorAll('input[name], textarea[name]').forEach(function (campo) {
+    valores[campo.name] = campo.value;
+  });
+  anterior.fechar();
+  const novo = anterior.reabrir();
+  if (!novo || !novo.modal) return;
+  novo.modal.querySelectorAll('input[name], textarea[name]').forEach(function (campo) {
+    if (valores[campo.name] !== undefined) campo.value = valores[campo.name];
+  });
+}
+
+// Cabeçalho padrão dos modais (título em duas partes + botão de fechar).
+function cabecalhoModal(parte1, parte2) {
+  return '<div class="modal-cabecalho"><h2>' + escaparHtml(parte1) + ' <b>' + escaparHtml(parte2) + '</b></h2>' +
+    '<button class="btn-fechar" data-fechar aria-label="' + escaparHtml(t('ariaFecharModal')) + '">' +
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>';
+}
+
+// Pop-up de detalhes do recurso.
+function abrirModalDetalhes(item) {
+  const linhas = [
+    [t('labelObservacao'), obsDe(item)], [t('labelGrupo'), tGrupo(item.grupo)],
+    [t('labelTipo'), tv(item.tipo)], [t('labelTime'), tv(item.time)],
+    [t('labelFrente'), tv(item.frente)], [t('labelEndereco'), item.link]
+  ].filter(function (l) { return l[1]; }).map(function (l) {
+    return '<div class="detalhe-linha"><span class="rotulo">' + escaparHtml(l[0]) + '</span><span class="valor">' + escaparHtml(l[1]) + '</span></div>';
+  }).join('');
+
+  const ref = abrirModal(
+    '<div class="modal-cabecalho"><h2>' + escaparHtml(nomeDe(item)) + '</h2>' +
+    '<button class="btn-fechar" data-fechar aria-label="' + escaparHtml(t('ariaFecharModal')) + '">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>' +
+    '<div class="modal-corpo">' + linhas +
+    '<div class="modal-acoes"><button class="btn btn-fantasma" data-fechar>' + escaparHtml(t('fechar')) + '</button>' +
+    '<button class="btn btn-acento" id="btnAcessarRecurso">' + escaparHtml(t('acessarRecurso')) + '</button></div></div>'
+  );
+  ref.modal.querySelector('#btnAcessarRecurso').addEventListener('click', function () {
+    abrirLinkDemo(item);
+    ref.fechar();
+  });
+  ref.reabrir = function () { return abrirModalDetalhes(item); };
+  return ref;
+}
+
+// Modal "Como funciona": mostra a planilha à esquerda e a árvore de menus gerada à direita.
+function abrirModalComoFunciona() {
+  // Coluna 1 — linhas da "planilha" (mostra uma amostra ampla, com a mais nova destacada)
+  const amostra = ESTADO.links.slice(-14);
+  const linhasTabela = amostra.map(function (l) {
+    const classe = l.id === ESTADO.idRecemCriado ? ' class="linha-nova"' : '';
+    return '<tr' + classe + '><td>' + escaparHtml(nomeDe(l)) + '</td>' +
+      '<td class="celula-grupo">' + escaparHtml(tGrupo(l.grupo)) + '</td></tr>';
+  }).join('');
+
+  // Coluna 2 — árvore com até 3 níveis e a contagem de cada nó
+  let arvore = '';
+  ordenarGrupos(Object.keys(ESTADO.arvore.filhos)).forEach(function (n1) {
+    const no1 = ESTADO.arvore.filhos[n1];
+    arvore += '<div class="no n1"><span>' + escaparHtml(tv(n1)) + '</span><span class="qtd">' + no1.total + '</span></div>';
+    ordenarGrupos(Object.keys(no1.filhos)).forEach(function (n2) {
+      const no2 = no1.filhos[n2];
+      arvore += '<div class="no n2"><span>' + escaparHtml(tv(n2)) + '</span><span class="qtd">' + no2.total + '</span></div>';
+      ordenarGrupos(Object.keys(no2.filhos)).forEach(function (n3) {
+        arvore += '<div class="no n3"><span>' + escaparHtml(tv(n3)) + '</span><span class="qtd">' + no2.filhos[n3].total + '</span></div>';
+      });
+    });
+  });
+
+  const ref = abrirModal(
+    cabecalhoModal(t('comoTitulo1'), t('comoTitulo2')) +
+    '<div class="modal-corpo"><div class="didatico">' +
+      '<div class="coluna"><h3><span class="num">1</span>' + escaparHtml(t('comoCol1')) + '</h3>' +
+        '<div class="caixa-rolagem"><table class="mini-tabela"><thead><tr>' +
+        '<th>' + escaparHtml(t('comoColNome')) + '</th><th>' + escaparHtml(t('comoColGrupo')) + '</th>' +
+        '</tr></thead><tbody>' + linhasTabela + '</tbody></table></div></div>' +
+      '<div class="seta-didatica"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+      '<div class="coluna"><h3><span class="num">2</span>' + escaparHtml(t('comoCol2')) + '</h3>' +
+        '<div class="caixa-rolagem"><div class="arvore-preview">' + arvore + '</div></div></div>' +
+      '<div class="explica-didatica">' + t('comoExplicacao') +
+        '<ul class="passos-didaticos">' +
+        '<li>' + t('comoPasso1') + '</li>' +
+        '<li>' + t('comoPasso2') + '</li>' +
+        '<li>' + t('comoPasso3') + '</li>' +
+        '<li>' + t('comoPasso4') + '</li>' +
+        '</ul></div>' +
+    '</div>' +
+    '<div class="modal-acoes"><button class="btn btn-fantasma" data-fechar>' + escaparHtml(t('fechar')) + '</button>' +
+    '<button class="btn btn-acento" id="btnIrCadastrar">' + escaparHtml(t('btnNovoLink')) + '</button></div></div>',
+    true
+  );
+
+  // Atalho: fecha a explicação e já abre o formulário de cadastro.
+  ref.modal.querySelector('#btnIrCadastrar').addEventListener('click', function () {
+    ref.fechar();
+    abrirModalNovoLink();
+  });
+  ref.reabrir = abrirModalComoFunciona;
+  return ref;
+}
+
+// Formulário de novo link: o cadastro acontece em memória e a interface se reconstrói na hora.
+function abrirModalNovoLink() {
+  const opcoes = function (extrair) {
+    return Array.from(new Set(ESTADO.links.map(extrair).filter(Boolean)))
+      .sort().map(function (v) { return '<option value="' + escaparHtml(v) + '">'; }).join('');
+  };
+
+  const ref = abrirModal(
+    cabecalhoModal(t('formTitulo1'), t('formTitulo2')) +
+    '<div class="modal-corpo">' +
+      '<div class="aviso-form">' + t('formAviso') + '</div>' +
+      '<form id="formNovoLink" novalidate>' +
+      '<div class="campo-form"><label>' + escaparHtml(t('formNome')) + ' <span class="obrig">*</span></label>' +
+        '<input name="nome" maxlength="200" placeholder="' + escaparHtml(t('formNomePh')) + '"></div>' +
+      '<div class="campo-form"><label>' + escaparHtml(t('formObservacao')) + '</label>' +
+        '<textarea name="observacao" rows="2" maxlength="1000" placeholder="' + escaparHtml(t('formObsPh')) + '"></textarea></div>' +
+      '<div class="campo-form"><label>' + escaparHtml(t('formGrupo')) + ' <span class="obrig">*</span></label>' +
+        '<input name="grupo" list="listaGrupos" placeholder="' + escaparHtml(t('formGrupoPh')) + '">' +
+        '<datalist id="listaGrupos">' + opcoes(function (l) { return l.grupo; }) + '</datalist>' +
+        '<span class="ajuda">' + escaparHtml(t('formGrupoAjuda')) + '</span></div>' +
+      '<div class="form-2col">' +
+        '<div class="campo-form"><label>' + escaparHtml(t('formTipo')) + ' <span class="obrig">*</span></label>' +
+          '<input name="tipo" list="listaTipos" placeholder="' + escaparHtml(t('formTipoPh')) + '">' +
+          '<datalist id="listaTipos">' + opcoes(function (l) { return l.tipo; }) + '</datalist></div>' +
+        '<div class="campo-form"><label>' + escaparHtml(t('formTime')) + ' <span class="obrig">*</span></label>' +
+          '<input name="time" list="listaTimes" placeholder="' + escaparHtml(t('formTimePh')) + '">' +
+          '<datalist id="listaTimes">' + opcoes(function (l) { return l.time; }) + '</datalist></div>' +
+        '<div class="campo-form"><label>' + escaparHtml(t('formFrente')) + ' <span class="obrig">*</span></label>' +
+          '<input name="frente" list="listaFrentes" placeholder="' + escaparHtml(t('formFrentePh')) + '">' +
+          '<datalist id="listaFrentes">' + opcoes(function (l) { return l.frente; }) + '</datalist></div>' +
+        '<div class="campo-form"><label>' + escaparHtml(t('formLink')) + ' <span class="obrig">*</span></label>' +
+          '<input name="link" maxlength="2000" placeholder="' + escaparHtml(t('formLinkPh')) + '">' +
+          '<span class="ajuda">' + escaparHtml(t('formLinkAjuda')) + '</span></div>' +
+      '</div>' +
+      '<div class="modal-acoes"><button type="button" class="btn btn-fantasma" data-fechar>' + escaparHtml(t('cancelar')) + '</button>' +
+      '<button type="submit" class="btn btn-acento" id="btnEnviarLink">' + escaparHtml(t('cadastrar')) + '</button></div>' +
+    '</form></div>'
+  );
+
+  ref.modal.querySelector('#formNovoLink').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    enviarNovoLink(ev.target, ref);
+  });
+  ref.reabrir = abrirModalNovoLink;
+  return ref;
+}
+
+// Completa o endereço quando o usuário digita sem protocolo (ex.: "exemplo.com/painel").
+function normalizarLink(valor) {
+  const texto = String(valor || '').trim();
+  if (!texto) return '';
+  if (/^https?:\/\//i.test(texto)) return texto;
+  return 'https://' + texto.replace(/^\/+/, '');
+}
+
+// Valida e "cadastra" o novo recurso em memória, reconstruindo menu, árvore, filtros e busca.
+function enviarNovoLink(form, refModal) {
+  const dados = {};
+  ['nome', 'observacao', 'grupo', 'tipo', 'time', 'frente', 'link'].forEach(function (c) {
+    dados[c] = (form.elements[c] ? form.elements[c].value : '').trim();
+  });
+
+  const obrigatorios = [['nome','formNome'], ['grupo','formGrupo'], ['tipo','formTipo'],
+                        ['time','formTime'], ['frente','formFrente'], ['link','formLink']];
+  for (const par of obrigatorios) {
+    if (!dados[par[0]]) {
+      mostrarToast(t('msgPreencha')(t(par[1])), 'erro');
+      form.elements[par[0]].focus();
+      return;
+    }
+  }
+
+  dados.link = normalizarLink(dados.link);
+  const jaExiste = ESTADO.links.some(function (l) {
+    return l.link.toLowerCase().replace(/\/+$/, '') === dados.link.toLowerCase().replace(/\/+$/, '');
+  });
+  if (jaExiste) { mostrarToast(t('msgDuplicado'), 'erro'); return; }
+
+  const btn = document.getElementById('btnEnviarLink');
+  btn.disabled = true; btn.textContent = t('enviando');
+
+  // Simula o tempo de gravação do back-end, depois insere em memória.
+  setTimeout(function () {
+    const novo = {
+      id: 'demo-' + (ESTADO.links.length + 1),
+      nome: { pt: dados.nome, en: dados.nome },
+      observacao: { pt: dados.observacao, en: dados.observacao },
+      grupo: dados.grupo, niveisGrupo: construirHierarquia(dados.grupo),
+      tipo: dados.tipo, time: dados.time, frente: dados.frente, link: dados.link
+    };
+    const areasAntes = Object.keys(ESTADO.arvore.filhos);
+
+    ESTADO.links.push(novo);
+    ESTADO.idRecemCriado = novo.id;
+    ESTADO.grupoRecemCriado = areasAntes.indexOf(novo.niveisGrupo[0]) === -1 ? novo.niveisGrupo[0] : '';
+
+    reconstruirInterface();
+    refModal.fechar();
+    mostrarToast(t('msgSucesso') + (ESTADO.grupoRecemCriado ? t('msgAreaNova')(tv(ESTADO.grupoRecemCriado)) : ''), 'sucesso');
+
+    // Leva o usuário direto à área do novo recurso, com o card destacado.
+    navegarPara(novo.niveisGrupo);
+    document.getElementById('secaoExplorar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 500);
+}
+
+// Reconstrói tudo que deriva dos dados: árvore, menu, filtros, acessos rápidos e navegação.
+function reconstruirInterface() {
+  ESTADO.arvore = criarArvoreDeGrupos(ESTADO.links);
+  renderizarMenu();
+  renderizarFiltros();
+  renderizarAcessosRapidos();
+  renderizarDrillDown();
+  document.getElementById('contagemTotal').textContent = t('recursosCadastrados')(ESTADO.links.length);
+}
+
+/* =====================================================================
+   12. TOAST
+   ===================================================================== */
+
+// Mensagem flutuante temporária (sucesso ou erro).
+function mostrarToast(mensagem, tipo) {
+  const area = document.getElementById('areaToasts');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + (tipo || 'sucesso');
+  toast.textContent = mensagem;
+  area.appendChild(toast);
+  setTimeout(function () { toast.remove(); }, 4600);
+}
+
+/* =====================================================================
+   13. INICIALIZAÇÃO
+   ===================================================================== */
+document.addEventListener('DOMContentLoaded', function () {
+  iniciarTema();
+  iniciarIdioma();
+  aplicarTextos();
+
+  ESTADO.links = prepararLinks(DADOS_INICIAIS);
+  ESTADO.arvore = criarArvoreDeGrupos(ESTADO.links);
+  reconstruirInterface();
+  ligarEventosFiltros();
+
+  const campo = document.getElementById('campoBusca');
+  campo.addEventListener('input', aoDigitarBusca);
+  campo.addEventListener('keydown', tecladoBusca);
+  document.addEventListener('mousedown', function (ev) {
+    if (!ev.target.closest('.caixa-busca')) document.getElementById('sugestoes').classList.add('oculto');
+  });
+});
+</script>
+</body>
+</html>
