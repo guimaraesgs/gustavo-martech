@@ -25,15 +25,13 @@ qualquer demo.
 ```
 index.html          ← a vitrine
 README.md           ← este arquivo
-dashs/              ← as 5 demonstrações
-assets/             ← thumbnails e a biblioteca de gráficos
+*.html              ← as 6 demonstrações
 ```
 
 **2.** No GitHub, abra o repositório e clique em **Add file → Upload files**.
 
-**3.** Arraste os **quatro itens** de dentro da pasta (o `index.html`, o `README.md` e as
-pastas `dashs` e `assets`) para a área de upload. O GitHub preserva a estrutura de pastas.
-Aguarde o upload terminar — são cerca de 1 MB no total.
+**3.** Arraste **todos os arquivos** de dentro da pasta para a área de upload. São só
+arquivos soltos, nenhuma pasta, então nada pode se perder no caminho.
 
 **4.** Escreva uma mensagem no campo de commit (ex.: `primeira versão da vitrine`) e clique
 em **Commit changes**.
@@ -66,27 +64,24 @@ Se a página não atualizar no navegador, force a recarga com `Ctrl + Shift + R`
 
 ```
 index.html                              vitrine (índice com busca e filtros)
-dashs/central-de-links.html             demo 01
-dashs/central-de-pagamentos.html        demo 02
-dashs/central-de-eventos.html           demo 03
-dashs/dashboard-de-leads.html           demo 04
-dashs/utm-builder.html                  demo 05
-dashs/registro-de-lead.html             demo 06
-assets/thumbs/*.jpg                     miniaturas usadas na vitrine
-assets/chart.umd.min.js                 Chart.js 4.4.0, usado pelo Dashboard de Leads
+central-de-links.html                   demo 01
+central-de-pagamentos.html              demo 02
+central-de-eventos.html                 demo 03
+dashboard-de-leads.html                 demo 04
+utm-builder.html                        demo 05
+registro-de-lead.html                   demo 06
 ```
 
-Cada arquivo em `dashs/` é autocontido: todo o CSS e o JavaScript estão dentro do próprio
-HTML. A única exceção é o Dashboard de Leads, que carrega o Chart.js de `assets/` — por isso
-essa pasta precisa ser publicada junto.
+Todos os arquivos são autocontidos: CSS, JavaScript, miniaturas e a biblioteca de gráficos
+estão embutidos dentro do próprio HTML. Não existe nenhuma pasta de apoio, então cada arquivo
+funciona sozinho e a ordem de upload não importa.
 
 O Registro de Lead grava áudio pelo microfone. Navegadores só liberam o microfone em páginas
 servidas por **HTTPS** ou em `localhost` — no GitHub Pages funciona normalmente, mas se você
 abrir o arquivo direto do disco (`file://`) a gravação pode ser bloqueada. O áudio gravado
 fica apenas na memória do navegador: dá para ouvir, mas nada é enviado nem armazenado.
 
-Se quiser publicar uma demo isolada, em outro lugar, basta o arquivo `.html` dela — com a
-ressalva do Chart.js no caso do Dashboard.
+Para publicar uma demo isolada em outro lugar, basta copiar o `.html` dela.
 
 ---
 
